@@ -1,0 +1,26 @@
+# Self Test 
+#size 1366 768
+#size 640 480
+#size 160 120
+size 80 60
+# Now specify the camera.  This is what you should implement.
+
+camera 0 0 4 0 0 0 0 1 0 60
+	
+
+
+directional 0.57735027 -0.57735027 -0.57735027 1 1 1
+directional -0.57735027  0.57735027  0.57735027 1 1 1
+
+# Now specify the geometry 
+maxdepth 2
+ambient .1 .1 .1
+diffuse 1 0 0 
+specular 1 1 1
+shininess 50.0
+#reflection .9 .9 .9
+#translate 0 0 -17
+#rotate 1.0 0 0 45
+#scale 4 2 2
+rotatey 45
+sphere 0 0 0 1.0

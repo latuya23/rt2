@@ -1,0 +1,16 @@
+#ignore compressed files
+*.gz
+#ignore o files
+*.o
+#ignore obj files
+*.obj
+#ignore the executable
+raytracer
+#ignore ppm files
+*.ppm
+#ignore jpg files
+*.jpg
+#ignore data folder
+#/data/*
+#except for ply files
+#!/data/*.ply

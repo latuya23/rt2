@@ -1,0 +1,167 @@
+Usage:
+
+COMPILING AND RUNNING
+
+-to compile type the following in the command line:
+	g++ *.cpp ./nv/*.cpp -o raytracer
+-the compilation will create a raytracer executable which you can called by typing the following:
+	./raytracer
+Currently, when raytracer is called it will generate the scenes listed under Scene.cpp to modify this just change the variable TESTS and the array outPut. In order to add a test go to the file Scene.cpp and add the filename to the array of strings outPut and increase the value given to TESTS.
+Raytracer will generate the images in .ppm format.
+If you want to change the images from .ppm to .jpg you could use the images2jpg.sh script. 
+In the command line type
+	./images2jpg.sh
+The script will change all of the pictures in the directory from .ppm to .jpg
+
+MAKING A SCENE
+-all the lines starting with # are ignored
+-the size command specified the size of the picture you want to generate in pixels.
+	size width height
+
+-maximum recursion for reflected rays
+	maxdepth number
+
+CAMERA
+-the camera command specifies the camera as in OpenGL 
+	camera lookfromx lookfromy lookfromz lookfromz lookatx lookaty lookatz upx upy upz fov	
+	the 3 first parameters are the x y z position of the camera
+	the 3 following parameters are the x y z position the camera is looking towards 
+	the next 3 parameters are up vector of the camera x y z
+	the last parameter is the fov (field of view)
+
+GEOMETRY
+-the sphere command creates a sphere at a given position with given radius
+	sphere x y z radius
+
+-specify the number of vertices you are going to make
+	maxverts number
+
+-specify the number of vertices with normals
+	maxvertnorms number
+
+-specify a vertex in the given location this is put into a stack and you can use them to make triangles using tri and giving the number of the vertex using 0 for the first specified vertex.
+	vertex x y z
+
+-specify a vertex and its normal
+	vertexnormal x y z nx ny nz
+
+-create a triangle with the vertices
+	tri v1 v2 v3
+
+-create a triangle with vertices & normals
+	trinormal v1 v2 v3
+
+TRANSFORMATIONS
+-translate to the given position
+	translate x y z
+
+-rotate by the given axis angle given in degrees
+	rotate x y z angle
+
+-the current modeling transform can be saved in a stack as in OpenGL using the following command
+	pushTransform
+
+-the current transform is pop from the stack as in OpenGL
+	popTransform
+
+LIGHTS & MATERIALS
+
+-to make a directional light use the directional command along with the direction to the light source and the color of the light in RGB
+	directional x y z r g b
+
+-to set the global ambient color 
+	ambient r g b
+
+-set the kd coefficient
+	diffuse r g b
+
+-set ks
+	specular r g b
+
+-set s
+	shininess s
+
+-set emission
+	emission r g b
+
+
+Raytracer
+
+On a high level, the flow of control through our program is as follows:
+
+The Scene main function instantiates several 
+classes including Camera, Parser, and RayTracer.
+
+The Parser is then called to read and parse the 
+specified file and make changes to a Camera
+and RayTracer instance.
+
+A Sampler instance is then recursively asked for
+Sample instances and those are used to get Ray
+instances from the Camera. 
+
+Those Ray instances are passed to the RayTracer 
+to determine what is the closest (if any) 
+object hit by the ray and we get the objects' BRDF
+and add the ambient and emissive components. Next,
+from the closest object that was hit we generate 
+a shadow ray to each of the light sources. If
+the light source is visible we calculate and add the 
+other components of the color(Li(Kd max(li*n,0)+Ks(n*hi)^s)).
+Finally, we check if the reflection coefficient is greater
+than 0. And if it is we shoot a reflection ray by calling
+the raytracer recursively with a maxdepth that will stop
+the recursion when it's reached.
+
+That final color result from ray tracing is then
+applied to the Film instance.
+
+When all Samples have been taken, the Film class
+takes care of writing to a file.
+
+
+The Ray_Tracer implementation consist of the following classes:
+
+Scene. This is our main file, it creates and manages all the other files.
+
+Camera. The Camera class generates a Ray given the screen-coordinates (x,y).
+
+Film. The film class basically writes the image to a .ppm file, it holds a 
+buffer of Color objects (one for each pixel that are set appropriately.
+When all pixels are set, the Film gets called to write to a file.
+Sample. A sample is an (x,y) coordinate representative of a pixel.
+
+Sampler. The sampler class is used to generate (x,y) coordinates until 
+we have gone through all of them (i.e. x:0->width, y:0->height).
+
+Ray. It represents a Ray, with origin r0 and  direction toward r1.
+
+RayTracer. The RayTracer assigns colors to pixels, it takes a ray 
+and checks every element in the scene if it intersects it, then returns a color
+given all the shadow rays and reflection rays generated from it.
+
+Intersection. The Intersection class, given a ray checks if a Ray intersects a Primitive.
+
+Parser. The Parser goes through the file detecting commands and creating the appropriate geometry.
+
+BRDF. BRDF stores the ambient(ka), emission(ke), diffuse(Kd),
+reflection(kr), specular(ks), shininess(s) coefficients.
+
+Color. The Color class is used to store colors in RGB format.
+Material. Also, it has methods to multiply, sum and subtract
+colors.
+
+DirectionalLight. represents a light pointing in a specific 
+direction, without any location and no attenuation factor.
+
+Light. The base class for both directional and point lights.
+
+PointLight. represents a light located at a specific point it
+has an specific attenuation with three coefficients. constant(kc), linear(kl)
+and quadratic(kd) coefficients.
+
+Primitive. A Primitive is basically any shape with a material and some kind of ray-intersection function.
+Triangle. Triangles have 3 vertices and their respective normal vectors.
+Sphere. Contains a transformation matrix that is used to change rays for intersections.
+
+

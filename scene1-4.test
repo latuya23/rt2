@@ -1,0 +1,87 @@
+# Test Scene 1 
+# A simple quad viewed from different camera positions
+
+#size 1366 768
+size 640 480
+#size 160 120
+
+#size 4 4
+
+# Now specify the camera.  This is what you should implement.
+# This file has 4 camera positions.  Render your scene for all 4.
+
+#camera0
+#camera 0 0 5 0 0 0 0 1 0 30
+#camera1
+camera 0 0 4 0 0 0 0 1 0 30
+#camera2
+#camera 0 -3 3 0 0 0 0 1 0 30
+#camera3
+#camera -4 0 1 0 0 1 0 0 1 45
+#camera4
+#camera -4 -4 4 1 0 0 0 1 0 30
+
+
+# lighting/material definitions
+# for initial testing, you should get the geometry right
+# you may want to use dummy (constant) shading, ignoring these lines
+
+#output something
+maxdepth 3
+
+ambient .1 .1 .9
+#ambient .9 .1 .1
+#ambient 0 0 1
+directional 0 0 1 .5 .5 .5 
+#point 4 0 4 .5 .5 .5
+diffuse 1 0 0
+specular 0 0 0
+shininess 60.0
+#reflection .7 .7 .7
+
+# Now specify the geometry 
+# Again, for initial testing, maybe you want to implement a dummy 
+# ray-plane intersection routine, instead of reading this fully.
+# Though it's probably simpler you just implement this, for later 
+# parts of the assignment.
+
+maxverts 4 
+
+vertex -1 -1 0 
+vertex +1 -1 0
+vertex +1 +1 0
+vertex -1 +1 0
+
+
+
+#rotate 0 0 1 10
+#scale 0.5 0.75 0.5
+#translate 1 0 0
+
+#rotate 0 0 1 10
+#scale 0.5 0.75 0.5
+#translate 1 0 0
+
+#rotate 0 0 1 10
+#scale 0.5 0.75 0.5
+#translate 1 0 0
+
+#sphere -1 -1 0 1
+#sphere -1 1 0 1
+#sphere 1 -1 0 1
+#sphere 1 1 0 1
+#sphere -.7 0 0 2
+#sphere -1.2 -1.2 .2 .7
+
+
+#diffuse 1 0 0
+#specular .5 .5 .5
+#shininess 128.0
+#sphere 0 -2 3 .6
+#sphere 0 0 0 1
+#sphere 1.6 1.6 1.6 .5
+#scale 0.5 0.5 0.5
+#rotate 1 0 0 10
+tri 0 1 2
+tri 0 2 3
+
