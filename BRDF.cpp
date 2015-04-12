@@ -74,18 +74,18 @@ void BRDF::SetBRDF(Color kd, Color ks, Color ka, Color ke, Color kr, double s, d
 }
 
 void BRDF::PrintBRDF(){
-	cout<<"diffuse kd:"<<endl;
+	std::cout<<"diffuse kd:"<<std::endl;
 	m_kd.PrintColor();
-	cout<<"specular ks:"<<endl;
+	std::cout<<"specular ks:"<<std::endl;
 	m_ks.PrintColor();
-	cout<<"ambient ka:"<<endl;
+	std::cout<<"ambient ka:"<<std::endl;
 	m_ka.PrintColor();
-	cout<<"emission ke:"<<endl;
+	std::cout<<"emission ke:"<<std::endl;
 	m_ke.PrintColor();
-	cout<<"reflection kr:"<<endl;
+	std::cout<<"reflection kr:"<<std::endl;
 	m_kr.PrintColor();
-	cout<<"Shininess: "<<m_s<<endl;
-	cout<<"Refraction Index:"<<m_kt<<endl;
+	std::cout<<"Shininess: "<<m_s<<std::endl;
+	std::cout<<"Refraction Index:"<<m_kt<<std::endl;
 }
 
 

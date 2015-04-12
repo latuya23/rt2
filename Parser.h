@@ -1,7 +1,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-#include <string.h>
+#include <string>
 #include <assert.h>
 #include <math.h>
 #include <fstream>
@@ -14,11 +14,9 @@
 #include "PointLight.h"
 #include "Material.h"
 
-using namespace std;
-
 class Parser{
 public:
-void initialparse(ifstream &inputfile, int* sizex, int* sizey);
-void parsefile(ifstream &inputfile, Camera *cam, RayTracer *tracer, int* maxD);
+void initialparse(std::ifstream &inputfile, int* sizex, int* sizey);
+void parsefile(std::ifstream &inputfile, Camera *cam, RayTracer *tracer, int* maxD);
 };
 #endif /*PARSER_H_*/

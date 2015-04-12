@@ -7,8 +7,6 @@
 #include <iostream>
 #include <iomanip>
 
-using namespace std;
-
 class Film {
 public:
 	Film();
@@ -20,7 +18,7 @@ public:
 	void PrintColor(int x, int y);
 	void PrintColors();
 	void WriteImage();
-	void WriteImage(string writeTo);
+	void WriteImage(std::string writeTo);
 
 private:
 	int m_width;

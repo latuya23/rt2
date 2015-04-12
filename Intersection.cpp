@@ -5,7 +5,7 @@ Intersection::Intersection() {
 
 }
 
-Intersection::Intersection(vec3 pos, Material m, double t, vec3 n, int p_id){
+Intersection::Intersection(glm::vec3 pos, Material m, double t, glm::vec3 n, int p_id){
 	position=pos;
 	m_material=m;
 	m_t=t;
@@ -13,7 +13,7 @@ Intersection::Intersection(vec3 pos, Material m, double t, vec3 n, int p_id){
 	m_p_id = p_id;
 }
 
-Intersection::Intersection(vec3 pos, Material m, double t, vec3 n){
+Intersection::Intersection(glm::vec3 pos, Material m, double t, glm::vec3 n){
 	position = pos;
 	m_material= m;
 	m_t= t;
@@ -25,6 +25,6 @@ Intersection::~Intersection() {
 	// TODO Auto-generated destructor stub
 }
 
-void Intersection::SetNormal(vec3 n){
+void Intersection::SetNormal(glm::vec3 n){
 	normal = n;
 }

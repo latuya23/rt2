@@ -44,7 +44,7 @@ void Film::Commit(Sample& sample, Color& color){
 	int width = (int)sample.GetX();
 	int height = (int)sample.GetY();
 	if (width>=m_width || height>=m_height || width<0 || height<0){
-		cout << "wrong sample \n" << endl;
+		std::cout << "wrong sample \n" << std::endl;
 	}
 	else{
 		m_image[m_width*height+width]=color;
@@ -64,22 +64,22 @@ void Film::PrintColors(){
 }
 
 void Film::WriteImage(){
-	string file="RayTracedImage";
-	WriteImage(file);
+  std::string file="RayTracedImage";
+  WriteImage(file);
 }
 
-void Film::WriteImage(string writeTo){
+void Film::WriteImage(std::string writeTo){
 	//output image to a file
 	int r,g,b;
 	Color temp;
 	double max=255.0;
 	writeTo.append(".ppm");
-	ofstream outf(writeTo.c_str());
+	std::ofstream outf(writeTo.c_str());
 	if (!outf) {
-		cerr<< "error opening file\n" << endl;
+	  std::cerr<< "error opening file\n" << std::endl;
 		exit(1);
 	}
-	cout<<"starting to write to image!"<<endl;
+	std::cout<<"starting to write to image!"<<std::endl;
 	outf<<"P3\n"<<m_width<<" "<<m_height<<"\n255";
 	for (int i=0; i<m_height; i++) {
 		outf<<"\n";
@@ -88,7 +88,7 @@ void Film::WriteImage(string writeTo){
 			r=(int) max*temp.GetR();
 			g=(int) max*temp.GetG();
 			b=(int) max*temp.GetB();
-			outf<<setw(3)<<r<<setw(4)<<g<<setw(4)<<b<<"   ";
+			outf<<std::setw(3)<<r<<std::setw(4)<<g<<std::setw(4)<<b<<"   ";
 		}
 	}
 }

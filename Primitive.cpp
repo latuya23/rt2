@@ -4,7 +4,7 @@ Primitive::Primitive() {
 	
 }
 
-Primitive::Primitive(vec3 v) {
+Primitive::Primitive(glm::vec3 v) {
 
 }
 

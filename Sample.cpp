@@ -1,8 +1,6 @@
 #include "Sample.h"
 #include <iostream>
 
-using namespace std;
-
 Sample::Sample(int x, int y) {
 	SetSample(x,y);
 }
@@ -17,5 +15,5 @@ void Sample::SetSample(int x, int y){
 }
 
 void Sample::PrintSample(){
-	cout << "x:" << m_x << ", y:" << m_y << endl;
+  std::cout << "x:" << m_x << ", y:" << m_y << std::endl;
 }

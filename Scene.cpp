@@ -6,12 +6,10 @@
 #include "Parser.h"
 #include "Film.h"
 
-using namespace std;
-
 const int TESTS=34;
 int maxDepth=3;
-static string outPut[TESTS];
-static ifstream inputfile;
+std::string outPut[TESTS];
+std::ifstream inputfile;
 
 int main() {
 outPut[0]="scene1.test";
@@ -48,20 +46,20 @@ outPut[30]="spheres4-2.test";
 outPut[31]="spheres4-3.test";
 outPut[32]="spheres4-4.test";
 outPut[33]="spheres4-5.test";
-
+ 
  	for (int names=0; names<TESTS; names++){
  		Film			 	myImage;
  		Camera			 	myCamera;
- 		vector<Primitive> 	myPrimitives(1, Primitive());
- 		vector<Triangle> 	myTriangles(1, Triangle());
+		std::vector<Primitive> 	myPrimitives(1, Primitive());
+		std::vector<Triangle> 	myTriangles(1, Triangle());
  		Parser				myParser;
  		Sample				currSample(0,0);
  		Sampler				mySampler;
  		RayTracer			myTracer;
- 		Ray					currRay(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
+ 		Ray					currRay(glm::vec3(0,0,0), glm::vec3(0,0,0), glm::vec3(0,0,0));
  		Color				currColor;
 
-
+	outPut[names].insert(0,std::string("./tests/"));
  	inputfile.open(outPut[names].c_str());
  	int *x,*y;
  	x =(int*) malloc(sizeof(int));
@@ -73,7 +71,7 @@ outPut[33]="spheres4-5.test";
  	mySampler.SetSamplerSize(*x, *y);
  	myParser.parsefile(inputfile, &myCamera, &myTracer, &maxDepth);
  	myTracer.SetDepth(maxDepth);
- 	cout<<"maxDepth: "<<maxDepth<<endl;
+ 	std::cout<<"maxDepth: "<<maxDepth<<std::endl;
  	assert(maxDepth>=2);
  	while(mySampler.GetSample(&currSample)){
 			currColor.SetColor(0.0,0.0,0.0); // reset currColor to 0 every time
@@ -81,12 +79,14 @@ outPut[33]="spheres4-5.test";
  	 		myTracer.traceRay(&currRay, 0, &currColor);
  	 		myImage.Commit(currSample, currColor);
  	 }
- 	myImage.WriteImage(outPut[names]);
- 	inputfile.close();
+	std::string outFileName = "./results/" + outPut[names].substr(8);
+ 	myImage.WriteImage(outFileName);
+	//myImage.WriteImage(outPut[names]);
+	inputfile.close();
  	delete x;
  	delete y;
- 	cout << "finished " << outPut[names] << endl;
+ 	std::cout << "finished " << outPut[names] << std::endl;
  	}
- 	cout << "finished everything" << endl;
+ 	std::cout << "finished everything" << std::endl;
  	return 0;
 }

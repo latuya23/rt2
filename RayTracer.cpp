@@ -1,7 +1,7 @@
 #include "RayTracer.h"
 
 RayTracer::RayTracer() {
-	cout<<"i have no maxDepth"<<endl;
+  std::cout<<"i have no maxDepth"<<std::endl;
 }
 
 RayTracer::RayTracer(int maxD){
@@ -26,8 +26,8 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
 	Color tempKr(0.0,0.0,0.0);
 	double tempKt=0.0;
 	BRDF closestBRDF;
-	Ray tempRay(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
-	closest = Intersection(vec3(0,0,0), tempM, 100000.0, vec3(0,0,0));
+	Ray tempRay(glm::vec3(0,0,0), glm::vec3(0,0,0), glm::vec3(0,0,0));
+	closest = Intersection(glm::vec3(0,0,0), tempM, 100000.0, glm::vec3(0,0,0));
 	bool foundAny = false;
 	for(unsigned int i = 0; i < myTriangles.size(); i++){
 		if(myTriangles[i].Intersects(r, &temp)){
@@ -59,12 +59,12 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
 	for (unsigned int i=0; i< myLights.size(); i++){
 		// cast a shadow ray to a light source at the intersection point & put it in tempRay
 		myLights[i]->GenerateLightRay(closest.GetPosition(), &tempRay, closest.GetNormal());
-		vec3 lPosorlDir=myLights[i]->GetPos(); //get the light position
+		glm::vec3 lPosorlDir=myLights[i]->GetPos(); //get the light position
 		bool midir=myLights[i]->GetMIDir(); 
 
 		// determine if the light is visible
 		foundAny = false;
-		temp = Intersection(vec3(0,0,0), tempM, 100000.0, vec3(0,0,0));
+		temp = Intersection(glm::vec3(0,0,0), tempM, 100000.0, glm::vec3(0,0,0));
 
 		for (unsigned int k = 0; k< myTriangles.size();k++){
 			if ( myTriangles[k].IntersectsP(&tempRay, &temp)){
@@ -98,7 +98,7 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
 		// s = shininess
 		//if(!foundAny){
 			
-			*tColor += shadow*Shading(myLights[i]->GetColor(),closestBRDF.GetKd(),closestBRDF.GetKs(),
+		*tColor += shadow*Shading(myLights[i]->GetColor(),closestBRDF.GetKd(),closestBRDF.GetKs(),
 					tempRay.GetD(),closest.GetNormal(),r->GetD(),closestBRDF.GetS()); 
 		shadow=1.0;
 	}
@@ -115,7 +115,7 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
 	// Handle refractions
 	tempKt = closestBRDF.GetKt();
 	if (tempKt>0.0 && tempKt<=1.0){
-		//cout<<tempKt<<endl;
+		//std::cout<<tempKt<<std::endl;
 		Ray refractRay = CreateRefractRay(r->GetD(),closest.GetNormal(),closest.GetPosition());
 
 		traceRay(&refractRay, depth+1, &tempColor); //recursive call
@@ -127,46 +127,47 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
 	return;
 }
 
-Ray RayTracer::CreateReflectRay(vec3 rDir, vec3 surfNormal, vec3 startP){
-	vec3 tempV=rDir;
-	scale(tempV,-1.0);
-	vec3 refDir;
-	reflect(refDir,surfNormal,tempV);
-	vec3 tempVS=surfNormal;
-	scale(tempVS,.01);
-	vec3 startP2;
-	add(startP2,tempVS,startP);
+Ray RayTracer::CreateReflectRay(glm::vec3 rDir, glm::vec3 surfNormal, glm::vec3 startP){
+	glm::vec3 tempV=rDir;
+	tempV = -tempV;
+	glm::vec3 refDir;
+	//reflect(refDir,surfNormal,tempV);
+	refDir = glm::reflect(tempV,surfNormal);
+	glm::vec3 tempVS=surfNormal;
+	tempVS = tempVS * .01f;
+	glm::vec3 startP2;
+	startP2 = tempVS+startP;
 	Ray refRay(startP2,refDir,startP);
 	return refRay;
 
 }
 
-Ray RayTracer::CreateRefractRay(vec3 rDir, vec3 surfNormal, vec3 startP){
+Ray RayTracer::CreateRefractRay(glm::vec3 rDir, glm::vec3 surfNormal, glm::vec3 startP){
 	double n = 1.33;
 	double cosI = dot(surfNormal, rDir);
 	double sinT2 = n*n*(1.0-cosI*cosI);
 	if (sinT2 > 1.0)
 	{
-		Ray refRay(vec3(0,0,0),vec3(0,0,0),vec3(0,0,0));
+		Ray refRay(glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(0,0,0));
 		return refRay;
 	}
-	vec3 tempDir, tempN, trDir;
-	scale(tempDir, n);
-	scale(tempN, (n+sqrt(1.0-sinT2)));
-	sub(trDir, tempDir, tempN);
-	normalize(trDir);
+	glm::vec3 tempDir, tempN, trDir;
+	tempDir = tempDir * (float)n;
+	tempN = tempN * (float)(n+sqrt(1.0-sinT2));
+	trDir = tempDir - tempN;
+	trDir = glm::normalize(trDir);
 
-	vec3 tempVS=surfNormal;
-	scale (tempVS, -.01);
-	vec3 startP2;
-	add(startP2,tempVS,startP);
+	glm::vec3 tempVS=surfNormal;
+	tempVS = tempVS * -.01f;
+	glm::vec3 startP2;
+	startP2 = tempVS + startP;
 	Ray refRay(startP2,trDir,startP);
 	return refRay;
 }
 
 
-Color RayTracer::Shading(Color lColor,Color diffuse,Color specular, vec3 lightDir,
-		vec3 normal, vec3 fromEye,double s){
+Color RayTracer::Shading(Color lColor,Color diffuse,Color specular, glm::vec3 lightDir,
+		glm::vec3 normal, glm::vec3 fromEye,double s){
 	//  do shading calculation
 	// Si Li(Kd max(li*n,0)+Ks max((n*hi)^s),0)) stars are dots
 	// Si binary either shadow or not shadowed
@@ -178,28 +179,28 @@ Color RayTracer::Shading(Color lColor,Color diffuse,Color specular, vec3 lightDi
 	// hi = half angle vector for the light
 	// fromEye is the ray direction starting from eye
 	// s=shininess
-	vec3 tempV;
+	glm::vec3 tempV;
 	long double temp1, temp2;
-	scale(fromEye, -1.0);
-	add(tempV,normalize(lightDir),normalize(fromEye)); // lightDir + fromEye
-	normalize(tempV); //half angle = normalize(lightDir + fromEye)
-	temp1=(long double)dot(normal, lightDir); //n*li
+	fromEye = -fromEye;
+        tempV = glm::normalize(lightDir) + glm::normalize(fromEye); // lightDir + fromEye
+        tempV = glm::normalize(tempV); //half angle = normalize(lightDir + fromEye)
+	temp1=(long double)glm::dot(normal, lightDir); //n*li
 
 	if (temp1>1.1){
 			temp1=1.0;
-			cout<<"aaa1"<<endl;
-			cout<<temp1<<endl;
-			cout<<normal.x<<","<<normal.y<<","<<normal.z<<endl;
+			std::cout<<"aaa1"<<std::endl;
+			std::cout<<temp1<<std::endl;
+			std::cout<<normal.x<<","<<normal.y<<","<<normal.z<<std::endl;
 		}
 	if (temp1<0.0 || isnan(temp1) || temp1< .0000001 || temp1>1000000.0){
 		temp1=0.0;
 	}
-	temp2=(long double)dot(normal, tempV); //n*hi
+        temp2=(long double)glm::dot(normal, tempV); //n*hi
 	temp2= pow(temp2,s); //(n*hi)^s
 
 	if (temp2>1.1){
 		temp2=1.0;
-		cout<<"aaa"<<endl;
+		std::cout<<"aaa"<<std::endl; 
 	}
 	if (temp2<0.0 || isnan(temp2) || temp2< .0000001 || temp2>1000000.0){
 		temp2=0.0;

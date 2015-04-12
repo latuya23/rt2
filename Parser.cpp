@@ -1,9 +1,12 @@
+#define GLM_SWIZZLE
 #include "Parser.h"
-#include "nv/nv_math.h"
 #include <assert.h>
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/transform.hpp>
 
 #define MAX_CHARS 1000
 const float PI = 3.1415926535897932384;
@@ -17,19 +20,15 @@ struct VertexNormal {
 	double normal[3];
 };
 
-void printMatrix(mat4 m){
-	cout<<endl;
-		for(int i = 0; i < 4; i++){
-			cout<<endl;
-			for(int j = 0; j <4; j++)
-				cout<<m.mat_array[j*4+i]<<",";
-		}
-		cout<<endl;
+void printMatrix(glm::mat4 m){
+	std::cout<<std::endl;
+	std::cout<<glm::to_string(m)<<",";
+	std::cout<<std::endl;
 }
 static int tnumber;
 int Sphere::next_id=0;
-Vertex * vert=0;
-VertexNormal * vertnorm=0;
+Vertex * vert=NULL;
+VertexNormal * vertnorm=NULL;
 int maxverts=0,maxvertnorms=0;
 int curvert=0,curvertnorm=0;
 
@@ -39,26 +38,26 @@ int lightnum=0;
 double attenuation[3] = {1.0, 0.0, 0.0} ;//set default attenuation
 int parsed = 0 ;
 
-void Parser::initialparse(ifstream &inputfile, int* sizex, int* sizey) {
-	string line;
-	char command[MAX_CHARS];
-	while (inputfile.good()){
-		getline (inputfile, line);
-		if (inputfile.eof()) {cout << "Nothing in file \n"<<endl; exit(1);};
-		if (line[0] == '#') continue; //comment lines
-		int num = sscanf(line.c_str(), "%s", command);
-		if (num != 1) continue; //Blank lines etc.
-		else break;
-	}
-
-    /*****   SET IMAGE SIZE ******/ //The first line should be the size command setting the image size
-    assert(!strcmp(command, "size")) ;
-    int num = sscanf(line.c_str(), "%s %d %d", command, sizex, sizey);
-    assert(num == 3) ;
-    assert(!strcmp(command, "size")) ;
+void Parser::initialparse(std::ifstream &inputfile, int* sizex, int* sizey) {
+  std::string line;
+  char command[MAX_CHARS];
+  while (inputfile.good()){
+    getline (inputfile, line);
+    if (inputfile.eof()) {std::cout << "Nothing in file \n"<<std::endl; exit(1);};
+    if (line[0] == '#') continue; //comment lines
+    int num = sscanf(line.c_str(), "%s", command);
+    if (num != 1) continue; //Blank lines etc.
+    else break;
+  }
+  
+  /*****   SET IMAGE SIZE ******/ //The first line should be the size command setting the image size
+  assert(!strcmp(command, "size")) ;
+  int num = sscanf(line.c_str(), "%s %d %d", command, sizex, sizey);
+  assert(num == 3) ;
+  assert(!strcmp(command, "size")) ;
 }
 
-void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int* maxD){
+void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer, int* maxD){
 	// this sets the default BRDF
 	// whenever a primitive is created
 	// this is used for its material
@@ -71,17 +70,17 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 	//s shininess = 0.0;
 
 	BRDF tempBRDF;
-	vector<mat4> transforms;
-	mat4 identity, currMatrix, tempMat, helper,helper2,mvt;
-	identityMatrix(identity);
-	identityMatrix(currMatrix);
-	identityMatrix(tempMat);
-	identityMatrix(helper);
-	identityMatrix(helper2);
-	identityMatrix(mvt);
-	vec3 tempVec;
+	std::vector<glm::mat4> transforms;
+	glm::mat4 identity, currMatrix, tempMat, helper,helper2,mvt;
+	identity = glm::mat4(1.0);
+	currMatrix= glm::mat4(1.0);
+	tempMat= glm::mat4(1.0);
+	helper= glm::mat4(1.0);
+	helper2= glm::mat4(1.0);
+	mvt= glm::mat4(1.0);
+	glm::vec3 tempVec;
 
-	string line;
+	std::string line;
 	char command[MAX_CHARS];
 	while (!inputfile.eof()) {
 		getline(inputfile, line);
@@ -94,7 +93,7 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
     /**************        CAMERA LOCATION **********/
     if (!strcmp(command, "camera")) {
       double lookfrom[3], lookat[3], up[3], fov ;
-      vec3 lookfrom0,lookat0,up0;
+      glm::vec3 lookfrom0,lookat0,up0;
 
       int num = sscanf(line.c_str(), "%s %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
 		       command, lookfrom, lookfrom+1, lookfrom+2,
@@ -128,9 +127,9 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 		fprintf(stderr, "sphere x y z radius\n") ;
 		exit(1) ;
 	  }
-	 tempVec =  vec3((float)pos[0],(float)pos[1],(float)pos[2]);
-	 invert(tempMat, currMatrix);
-	 transpose(mvt, tempMat);
+	 tempVec =  glm::vec3((float)pos[0],(float)pos[1],(float)pos[2]);
+	 tempMat = glm::inverse(currMatrix);
+	 mvt = glm::transpose(tempMat);
 	 tracer->addSphere(Sphere(tempVec, radius, Material(tempBRDF), tempMat, currMatrix, mvt));// makes a sphere with material props from the tempBRDF
     }
 
@@ -204,17 +203,21 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 	  }
 
       //starts
-      vec3 verts[3], temps[3], tempnormie;
+      glm::vec3 verts[3], temps[3];
+      glm::vec4 tempnormie;
+      
       for(i = 0; i < 3; i++){
-    	  verts[i] = vec3((float)vertex[i][0], (float)vertex[i][1],(float)vertex[i][2]);
-    	  mult(temps[i], currMatrix, verts[i]);
+    	  verts[i] = glm::vec3((float)vertex[i][0], (float)vertex[i][1],(float)vertex[i][2]);
+	  glm::vec4 temp = currMatrix*glm::vec4(verts[i],0);
+	  temps[i] = temp.xyz();
       }
-      vec3 normie((float)normal[0], (float)normal[1], (float)normal[2]);
-      invert(tempMat, currMatrix);
-      transpose(tempMat);
-      mult(tempnormie,tempMat,normie);
-      normalize(tempnormie);
-      Triangle t(temps, tempnormie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
+      glm::vec3 normie((float)normal[0], (float)normal[1], (float)normal[2]);
+      tempMat = glm::inverse(currMatrix);
+      tempMat = glm::transpose(tempMat);
+      tempnormie=tempMat*glm::vec4(normie,0);
+      tempnormie = glm::normalize(tempnormie);
+      glm::vec3 tempNormie(tempnormie);
+      Triangle t(temps, tempNormie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
       tracer->addTriangle(t);
       }
 
@@ -227,11 +230,11 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 	    assert(pts[i] >= 0 && pts[i] < maxvertnorms) ;
 	  }
 	  printf("trinormal\n");
-      vec3 verts[3];
-      vec3 normie[3];
+      glm::vec3 verts[3];
+      glm::vec3 normie[3];
       for(int i = 0; i < 3; i++){
-    		  verts[i] = vec3((float)vertnorm[pts[i]].pos[0], (float)vertnorm[pts[i]].pos[1],(float)vertnorm[pts[i]].pos[2]);
-    		  normie[i] = vec3((float)vertnorm[pts[i]].normal[0], (float)vertnorm[pts[i]].normal[1], (float)vertnorm[pts[i]].normal[2]);
+    		  verts[i] = glm::vec3((float)vertnorm[pts[i]].pos[0], (float)vertnorm[pts[i]].pos[1],(float)vertnorm[pts[i]].pos[2]);
+    		  normie[i] = glm::vec3((float)vertnorm[pts[i]].normal[0], (float)vertnorm[pts[i]].normal[1], (float)vertnorm[pts[i]].normal[2]);
       }
 
 	  double normal[3] ;
@@ -252,7 +255,7 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 		for (i = 0 ; i < 3 ; i++) normal[i] = vect3[i] / norm ;
 	  }
       Triangle t(verts, normie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
-      t.setFaceNormal(vec3 ((float)normal[0], (float)normal[1], (float)normal[2]));
+      t.setFaceNormal(glm::vec3 ((float)normal[0], (float)normal[1], (float)normal[2]));
       tracer->addTriangle(t);
 	}
 
@@ -265,9 +268,10 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 		fprintf(stderr, "translate x y z\n") ;
 		exit(1) ;
 	  }
-	    currMatrix.a03 += (float)x;
-	  	currMatrix.a13 += (float)y;
-	  	currMatrix.a23 += (float)z;
+	  currMatrix = glm::translate(currMatrix,glm::vec3(x,y,z));
+	  //currMatrix.a03 += (float)x;
+	  //	currMatrix.a13 += (float)y;
+	  //currMatrix.a23 += (float)z;
 	}
 
 	else if (!strcmp(command, "rotate")) {
@@ -277,12 +281,14 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 		fprintf(stderr, "rotate angle x y z\n") ;
 		exit(1) ;
 	  }
-	  vec3 tempVec =vec3 ((float)x,(float)y,(float)z);
-	  normalize(tempVec);
-	  identityMatrix(helper);
-	  helper.set_rot((float)ang*(float)PI/(float)180.0,tempVec);
+	  glm::vec3 tempVec =glm::vec3 ((float)x,(float)y,(float)z);
+	  tempVec = glm::normalize(tempVec);
+	  helper = glm::mat4();
+	  //helper.set_rot((float)ang*(float)PI/(float)180.0,tempVec);
+	  //float angle = (float)ang*(float)PI/(float)180.0;
+	  helper = glm::rotate((float)ang,tempVec);
 	  helper2=currMatrix;
-	  mult(currMatrix, helper2, helper);
+	  currMatrix=helper2*helper;
 	}
 
 	else if (!strcmp(command, "rotatex")) {
@@ -292,10 +298,12 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 			fprintf(stderr, "rotatex angle \n") ;
 			exit(1) ;
 		  }
-		  identityMatrix(helper);
-		  helper.set_rotx((float)ang*(float)PI/(float)180.0);
+		  helper = glm::mat4();
+		  //helper.set_rotx((float)ang*(float)PI/(float)180.0);
+		  //float angle = (float)ang*(float)PI/(float)180.0;
+		  helper = glm::rotate((float)ang,glm::vec3(1,0,0));
 		  helper2=currMatrix;
-		  mult(currMatrix, helper2, helper);
+		  currMatrix = helper2 * helper;
 		}
 
 	else if (!strcmp(command, "rotatey")) {
@@ -305,10 +313,12 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 				fprintf(stderr, "rotatey angle \n") ;
 				exit(1) ;
 			  }
-			  identityMatrix(helper);
-			  helper.set_roty((float)ang*(float)PI/(float)180.0);
+			  helper = glm::mat4();
+			  //helper.set_roty((float)ang*(float)PI/(float)180.0);
+			  //float angle = (float)ang*(float)PI/(float)180.0;
+			  helper = glm::rotate((float)ang,glm::vec3(0,1,0));
 			  helper2=currMatrix;
-			  mult(currMatrix,helper2,helper);
+			  currMatrix=helper2*helper;
 			}
 
 	else if (!strcmp(command, "rotatez")) {
@@ -318,10 +328,12 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 				fprintf(stderr, "rotatez angle \n") ;
 				exit(1) ;
 			  }
-			  identityMatrix(helper);
-			  helper.set_rotz((float)ang*(float)PI/(float)180.0);
+			  helper = glm::mat4();
+			  //helper.set_rotz((float)ang*(float)PI/(float)180.0);
+			  // float angle = (float)ang*(float)PI/(float)180.0;
+			  helper = glm::rotate((float)ang,glm::vec3(0,0,1));
 			  helper2=currMatrix;
-			  mult(currMatrix,helper2,helper);
+			  currMatrix = helper2*helper;
 			}
 
 	else if (!strcmp(command, "scale")) {
@@ -331,12 +343,12 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 		fprintf(stderr, "scale x y z\n") ;
 		exit(1) ;
 	  }
-	  identityMatrix(helper);
-	  helper.a00=(float)x;
-	  helper.a11=(float)y;
-	  helper.a22=(float)z;
+	  helper = glm::mat4();
+	  helper[0][0]=(float)x;
+	  helper[1][1]=(float)y;
+	  helper[2][2]=(float)z;
 	  helper2=currMatrix;
-	  mult(currMatrix,helper2,helper);
+	  currMatrix = helper2 * helper;
 	}
 
 	else if (!strcmp(command, "pushTransform")) {
@@ -353,7 +365,7 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 	  assert(num == 2) ;
 	  assert(!strcmp(command, "maxdepth")) ;
 	  *maxD=maxdepth;
-	  cout<<" maxdepth: "<<*maxD<<endl;
+	  std::cout<<" maxdepth: "<<*maxD<<std::endl;
 	}
 
        else if (!strcmp(command, "output")) {
@@ -362,7 +374,7 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 	   assert(num == 2) ;
 	   assert(!strcmp(command, "output")) ;
 	   //output->assign(out);
-	   //cout<<*output<<endl;
+	   //std::cout<<*output<<std::endl;
       }
 
     /*************************************************/
@@ -372,8 +384,8 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 	 int num = sscanf(line.c_str(), "%s %f %f %f %f %f %f", command, direction, direction+1, direction+2, color, color+1, color+2) ;
 	 assert(num == 7) ;
 	 
-	vec3 temp(direction[0],direction[1],direction[2]);
-	vec3 temp2=temp;
+	glm::vec3 temp(direction[0],direction[1],direction[2]);
+	glm::vec3 temp2=temp;
 	normalize(temp2);
 	Color tempC(color[0],color[1],color[2]);
 	Light* tempLight = new DirectionalLight(temp,tempC,temp2);
@@ -386,7 +398,7 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
 	 int num = sscanf(line.c_str(), "%s %f %f %f %f %f %f", command, direction, direction+1, direction+2, color, color+1, color+2) ;
 	 assert(num == 7) ;
 	 
-	 vec3 temp(direction[0],direction[1],direction[2]);
+	 glm::vec3 temp(direction[0],direction[1],direction[2]);
 	 Color tempC((double)color[0],(double)color[1],(double)color[2]);
 	 Light* tempLight = new PointLight(temp,tempC,temp,attenuation[0],attenuation[1],attenuation[2]);
 	tempLight->m_idirl = false;
@@ -488,5 +500,5 @@ void Parser::parsefile(ifstream &inputfile, Camera *cam,  RayTracer *tracer, int
    lightnum=0;
    parsed = 0 ;
    tnumber++;
-   cout << "parsing ended successfully " << tnumber << endl;
+   std::cout << "parsing ended successfully " << tnumber << std::endl;
 }

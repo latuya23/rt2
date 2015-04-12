@@ -1,10 +1,11 @@
-CC=g++
-CFLAGS=-Wall
+CC = g++
+CFLAGS = -pipe  #-g -Wall 
+//LLDLIBS =
 
 all: raytracer
-
+# ./nv/*.cpp
 raytracer:
-	$(CC) $(CFLAGS) *.cpp ./nv/*.cpp -o raytracer
+	$(CC) $(CFLAGS) *.cpp -o raytracer
 
 clean:
 	rm ./raytracer

@@ -1,10 +1,10 @@
 #include "Triangle.h"
 
 Triangle::Triangle() {
-	// TODO Auto-generated constructor stub
+  // TODO Auto-generated constructor stub
 }
 
-Triangle::Triangle(vec3 verts[3], vec3 norm, Material m)
+Triangle::Triangle(glm::vec3 verts[3], glm::vec3 norm, Material m)
 {
 	for(int i = 0; i < 3; i++){
 		vertices[i] = verts[i];
@@ -14,7 +14,7 @@ Triangle::Triangle(vec3 verts[3], vec3 norm, Material m)
 	m_material = m;
 }
 
-Triangle::Triangle(vec3 verts[3], vec3 norms[3], Material m)
+Triangle::Triangle(glm::vec3 verts[3], glm::vec3 norms[3], Material m)
 {
 	for(int i = 0; i < 3; i++){
 		vertices[i] = verts[i];
@@ -23,22 +23,22 @@ Triangle::Triangle(vec3 verts[3], vec3 norms[3], Material m)
 	m_material = m;
 }
 
-void Triangle::setFaceNormal(vec3 n){
+void Triangle::setFaceNormal(glm::vec3 n){
 	face_normal = n;
 }
 
 void Triangle::print(){
-	cout<<"i am triangle!"<<endl;
-	cout<<"vertices:"<<endl;
-	cout<<"a:"<<endl;
+	std::cout<<"i am triangle!"<<std::endl;
+	std::cout<<"vertices:"<<std::endl;
+	std::cout<<"a:"<<std::endl;
 	printVector(vertices[0]);
-	cout<<"b:"<<endl;
+	std::cout<<"b:"<<std::endl;
 	printVector(vertices[1]);
-	cout<<"c:"<<endl;
+	std::cout<<"c:"<<std::endl;
 	printVector(vertices[2]);
 }
-void Triangle::printVector(vec3 q0){
-	cout<<"("<<q0.x<<","<<q0.y<<","<<q0.z<<")"<<endl;
+void Triangle::printVector(glm::vec3 q0){
+	std::cout<<"("<<q0.x<<","<<q0.y<<","<<q0.z<<")"<<std::endl;
 }
 
 bool Triangle::Intersects(Ray *r, Intersection *in){
@@ -84,11 +84,11 @@ bool Triangle::Intersects(Ray *r, Intersection *in){
 	t = -(f*akjb + e*jcal + d*blkc)/denom;
 	if (t >= .01 && t <=r->Gettmax() && !isnan(t))
 	{
-		vec3 normal, v1v0,v2v0;
-		sub(v1v0, vertices[1],vertices[0]);
-		sub(v2v0, vertices[2],vertices[0]);
-		cross(normal, v1v0,v2v0);
-		normalize(normal);
+		glm::vec3 normal, v1v0,v2v0;
+		v1v0 = vertices[1] - vertices[0];
+		v2v0 = vertices[2] - vertices[0];
+                normal = glm::cross(v1v0,v2v0);
+                normal = glm::normalize(normal);
 		*in = Intersection (r->evaluate(t), m_material, t, face_normal);
 		return true;
 	}

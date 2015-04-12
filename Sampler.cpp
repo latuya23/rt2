@@ -1,8 +1,6 @@
 #include <cstdlib>
 #include "Sampler.h"
 
-using namespace std;
-
 Sampler::Sampler() {
 	SetSamplerSize(0,0);
 }
@@ -12,7 +10,7 @@ Sampler::Sampler(int sizex, int sizey) {
 	m_sizey=sizey;
 	m_currx=0;
 	m_curry=0;
-	cout << "sampler size: " <<sizex<<sizey<<endl;
+	std::cout << "sampler size: " <<sizex<<sizey<<std::endl;
 }
 
 Sampler::~Sampler() {
@@ -46,7 +44,7 @@ bool Sampler::GetSample(Sample* sample){
 		}
 		return true;
 	}
-	cout << "YOU ARE NOT SUPPOSED TO GET HERE!!!"<<endl;
+	std::cout << "YOU ARE NOT SUPPOSED TO GET HERE!!!"<<std::endl;
 	exit(1);
 	return false;
 }

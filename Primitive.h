@@ -2,17 +2,17 @@
 #define PRIMITIVE_H_
 
 #include "Ray.h"
-#include "nv/nv_math.h"
 #include "Intersection.h"
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
 #include "Material.h"
+#include <glm/glm.hpp>
 
 class Primitive {
 public:
 	Primitive();
-	Primitive(vec3 v);
+	Primitive(glm::vec3 v);
 	virtual ~Primitive();
 	virtual void print();
 	virtual bool intersects(Ray *r, Intersection *i);

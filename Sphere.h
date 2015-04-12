@@ -2,10 +2,11 @@
 #define SPHERE_H_
 
 #include "Primitive.h"
+#include <glm/gtc/type_ptr.hpp>
 class Sphere :public Primitive{
 public:
 	Sphere();
-	Sphere(vec3 pos, double r, Material m, mat4 inverse, mat4 transform, mat4 invT);
+	Sphere(glm::vec3 pos, double r, Material m, glm::mat4 inverse, glm::mat4 transform, glm::mat4 invT);
 	bool Intersects(Ray *r, Intersection *i);
 	bool IntersectsP(Ray *r, Intersection *i);
 	void print();
@@ -23,10 +24,10 @@ private:
 	static int next_id;
 	int m_id;
 	double radius;
-	vec3 m_pos;
-	mat4 m_inverse;
-	mat4 m_transform;
-	mat4 m_invT;
+	glm::vec3 m_pos;
+	glm::mat4 m_inverse;
+	glm::mat4 m_transform;
+	glm::mat4 m_invT;
 	bool first;
 };
 

@@ -4,8 +4,6 @@
 #include "Color.h"
 #include <iostream>
 
-using namespace std;
-
 class BRDF {
 private:
 	// kd, diffuse component

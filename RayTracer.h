@@ -8,8 +8,6 @@
 #include "PointLight.h"
 #include <math.h>
 
-using namespace std;
-
 class RayTracer {
 public:
 
@@ -18,8 +16,8 @@ public:
 	virtual ~RayTracer();
 	void SetDepth(int maxD);
 	int GetMaxDepth(){return m_Depth;}
-	Ray CreateReflectRay(vec3 rDir, vec3 surfNormal, vec3 startP);
-	Ray CreateRefractRay(vec3 rDir, vec3 surfNormal, vec3 startP);
+	Ray CreateReflectRay(glm::vec3 rDir, glm::vec3 surfNormal, glm::vec3 startP);
+	Ray CreateRefractRay(glm::vec3 rDir, glm::vec3 surfNormal, glm::vec3 startP);
 	void traceRay(Ray *r, int depth, Color* tColor);
 	void addTriangle(Triangle tv);
 	void addSphere(Sphere s);
@@ -37,13 +35,13 @@ public:
 	// Ks = specular
 	// hi = half angle vector for the light
 	// s = shininess
-	Color Shading(Color lColor,Color diffuse,Color specular, vec3 lightDir,
-			vec3 normal,vec3 fromEye,double s);
+	Color Shading(Color lColor,Color diffuse,Color specular, glm::vec3 lightDir,
+			glm::vec3 normal,glm::vec3 fromEye,double s);
 
 private:
-	vector<Triangle> myTriangles;
-	vector<Sphere> mySpheres;
-	vector<Light*> myLights;
+	std::vector<Triangle> myTriangles;
+	std::vector<Sphere> mySpheres;
+	std::vector<Light*> myLights;
 	int m_Depth;
 	bool isCloser(Ray *r, Intersection i1, Intersection i2);
 };
