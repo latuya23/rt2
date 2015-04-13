@@ -6,14 +6,25 @@
 #include "Parser.h"
 #include "Film.h"
 
-const int TESTS=35;
+int TESTS=35;
 int maxDepth=3;
-std::string outPut[TESTS];
+
 std::ifstream inputfile;
 std::ifstream tests;
 
 int main(int argc, char* argv[]) {
-  tests.open("./testFiles");
+  if (argc == 1){
+    tests.open("./testFiles");
+  }
+  else if (argc == 2){
+    tests.open(argv[1]);
+    TESTS = 1;
+  }
+  else {
+    std::cout << "Usage: " << argv[0] << " filename" <<std::endl;
+    return 0;
+  }
+  std::string outPut[TESTS];
   std::string line;
   int i = 0;
   while (tests.good() && i<TESTS){
