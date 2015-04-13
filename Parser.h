@@ -16,7 +16,7 @@
 
 class Parser{
 public:
-void initialparse(std::ifstream &inputfile, int* sizex, int* sizey);
+void initialparse(std::ifstream &inputfile, int& sizex, int& sizey);
 void parsefile(std::ifstream &inputfile, Camera *cam, RayTracer *tracer, int* maxD);
 };
 #endif /*PARSER_H_*/

@@ -1,11 +1,19 @@
 CC = g++
-CFLAGS = -pipe  #-g -Wall 
-//LLDLIBS =
+CFLAGS = -pipe -g -Wall
+LDFLAGS = -g -Wall -pipe
+TARGET = raytracer
+CXXFILES = Scene.cpp Camera.cpp BRDF.cpp Color.cpp Light.cpp Ray.cpp Material.cpp Intersection.cpp Sample.cpp Parser.cpp Sampler.cpp Primitive.cpp Sphere.cpp Triangle.cpp PointLight.cpp RayTracer.cpp DirectionalLight.cpp Film.cpp
 
-all: raytracer
-# ./nv/*.cpp
-raytracer:
-	$(CC) $(CFLAGS) *.cpp -o raytracer
+OBJECTS = $(CXXFILES:.cpp=.o)
+
+default all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
+
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm ./raytracer
+	-rm -f $(OBJECTS)
+	-rm -f $(TARGET)

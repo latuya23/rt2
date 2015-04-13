@@ -12,7 +12,7 @@
 class Primitive {
 public:
 	Primitive();
-	Primitive(glm::vec3 v);
+	Primitive(glm::dvec3 v);
 	virtual ~Primitive();
 	virtual void print();
 	virtual bool intersects(Ray *r, Intersection *i);

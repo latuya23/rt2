@@ -6,87 +6,62 @@
 #include "Parser.h"
 #include "Film.h"
 
-const int TESTS=34;
+const int TESTS=35;
 int maxDepth=3;
 std::string outPut[TESTS];
 std::ifstream inputfile;
+std::ifstream tests;
 
-int main() {
-outPut[0]="scene1.test";
-outPut[1]="scene1-camera1.test";
-outPut[2]="scene1-camera2.test";
-outPut[3]="scene1-camera3.test";
-outPut[4]="scene1-camera4.test";
-outPut[5]="scene2-camera1.test";
-outPut[6]="scene2-camera2.test";
-outPut[7]="scene2-camera3.test";
-outPut[8]="scene3.test";
-outPut[9]="self.test";
-outPut[10]="spheres.test";
-outPut[11]="self1.test";
-outPut[12]="spheres2.test";
-outPut[13]="spheres3.test";
-outPut[14]="scene3-2.test";
-outPut[15]="self2.test";
-outPut[16]="self3.test";
-outPut[17]="self4.test";
-outPut[18]="self2-1.test";
-outPut[19]="self2-2.test";
-outPut[20]="self4-2.test";
-outPut[21]="self4-3.test";
-outPut[22]="spheres4.test";
-outPut[23]="self4-4.test";
-outPut[24]="self4-5.test";
-outPut[25]="self4-6.test";
-outPut[26]="self2-3.test";
-outPut[27]="self3-1.test";
-outPut[28]="scene1-4.test";
-outPut[29]="spheres4-1.test";
-outPut[30]="spheres4-2.test";
-outPut[31]="spheres4-3.test";
-outPut[32]="spheres4-4.test";
-outPut[33]="spheres4-5.test";
- 
- 	for (int names=0; names<TESTS; names++){
- 		Film			 	myImage;
- 		Camera			 	myCamera;
-		std::vector<Primitive> 	myPrimitives(1, Primitive());
-		std::vector<Triangle> 	myTriangles(1, Triangle());
- 		Parser				myParser;
- 		Sample				currSample(0,0);
- 		Sampler				mySampler;
- 		RayTracer			myTracer;
- 		Ray					currRay(glm::vec3(0,0,0), glm::vec3(0,0,0), glm::vec3(0,0,0));
- 		Color				currColor;
-
-	outPut[names].insert(0,std::string("./tests/"));
- 	inputfile.open(outPut[names].c_str());
- 	int *x,*y;
- 	x =(int*) malloc(sizeof(int));
- 	y =(int*) malloc(sizeof(int));
- 	myParser.initialparse(inputfile, x, y);
- 	myCamera.SetAspect(x, y);
- 	myImage.SetFilm(*x,*y);
- 	myImage.InitializeFilm();
- 	mySampler.SetSamplerSize(*x, *y);
- 	myParser.parsefile(inputfile, &myCamera, &myTracer, &maxDepth);
- 	myTracer.SetDepth(maxDepth);
- 	std::cout<<"maxDepth: "<<maxDepth<<std::endl;
- 	assert(maxDepth>=2);
- 	while(mySampler.GetSample(&currSample)){
-			currColor.SetColor(0.0,0.0,0.0); // reset currColor to 0 every time
- 	 		myCamera.GenerateRay(currSample,&currRay);
- 	 		myTracer.traceRay(&currRay, 0, &currColor);
- 	 		myImage.Commit(currSample, currColor);
- 	 }
-	std::string outFileName = "./results/" + outPut[names].substr(8);
- 	myImage.WriteImage(outFileName);
-	//myImage.WriteImage(outPut[names]);
-	inputfile.close();
- 	delete x;
- 	delete y;
- 	std::cout << "finished " << outPut[names] << std::endl;
- 	}
- 	std::cout << "finished everything" << std::endl;
- 	return 0;
+int main(int argc, char* argv[]) {
+  tests.open(argv[1]);
+  std::string line;
+  int i = 0;
+  while (tests.good() && i<TESTS){
+    getline(tests, line);
+    if (tests.eof()) {
+      std::cout << "nothing left file " <<std::endl;
+      break;
+    }
+    outPut[i] = line;
+    i++;
+  }
+  for (int names=0; names<TESTS; names++){
+    Film			myImage;
+    Camera			myCamera;
+    std::vector<Primitive> 	myPrimitives(1, Primitive());
+    std::vector<Triangle> 	myTriangles(1, Triangle());
+    Parser			myParser;
+    Sample			currSample(0,0);
+    Sampler			mySampler;
+    RayTracer			myTracer;
+    Ray			currRay(glm::dvec3(0,0,0), glm::dvec3(0,0,0), glm::dvec3(0,0,0));
+    Color			currColor;
+    outPut[names].insert(0,std::string("./tests/"));
+    inputfile.open(outPut[names].c_str());
+    int x,y;
+    x =0;
+    y =0;
+    myParser.initialparse(inputfile, x, y);
+    myCamera.SetAspect(x, y);
+    myImage.SetFilm(x,y);
+    myImage.InitializeFilm();
+    mySampler.SetSamplerSize(x, y);
+    myParser.parsefile(inputfile, &myCamera, &myTracer, &maxDepth);
+    myTracer.SetDepth(maxDepth);
+    std::cout<<"maxDepth: "<<maxDepth<<std::endl;
+    assert(maxDepth>=1);
+    while(mySampler.GetSample(&currSample)){
+      currColor.SetColor(0.0,0.0,0.0); // reset currColor to 0 every time
+      myCamera.GenerateRay(currSample,&currRay);
+      myTracer.traceRay(&currRay, 0, &currColor);
+      myImage.Commit(currSample, currColor);
+    }
+    std::string outFileName = "./results/" + outPut[names].substr(8);
+    myImage.WriteImage(outFileName);
+    //myImage.WriteImage(outPut[names]);
+    inputfile.close();
+    std::cout << "finished " << outPut[names] << std::endl;
+  }
+  std::cout << "finished everything" << std::endl;
+  return 0;
 }

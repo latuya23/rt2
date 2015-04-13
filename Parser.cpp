@@ -6,10 +6,11 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 #define MAX_CHARS 1000
-const float PI = 3.1415926535897932384;
+const double PI = 3.1415926535897932384;
 
 struct Vertex {
 	double pos[3];
@@ -20,7 +21,7 @@ struct VertexNormal {
 	double normal[3];
 };
 
-void printMatrix(glm::mat4 m){
+void printMatrix(glm::dmat4 m){
 	std::cout<<std::endl;
 	std::cout<<glm::to_string(m)<<",";
 	std::cout<<std::endl;
@@ -38,7 +39,7 @@ int lightnum=0;
 double attenuation[3] = {1.0, 0.0, 0.0} ;//set default attenuation
 int parsed = 0 ;
 
-void Parser::initialparse(std::ifstream &inputfile, int* sizex, int* sizey) {
+void Parser::initialparse(std::ifstream &inputfile, int& sizex, int& sizey) {
   std::string line;
   char command[MAX_CHARS];
   while (inputfile.good()){
@@ -52,7 +53,7 @@ void Parser::initialparse(std::ifstream &inputfile, int* sizex, int* sizey) {
   
   /*****   SET IMAGE SIZE ******/ //The first line should be the size command setting the image size
   assert(!strcmp(command, "size")) ;
-  int num = sscanf(line.c_str(), "%s %d %d", command, sizex, sizey);
+  int num = sscanf(line.c_str(), "%s %d %d", command, &sizex, &sizey);
   assert(num == 3) ;
   assert(!strcmp(command, "size")) ;
 }
@@ -70,15 +71,21 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 	//s shininess = 0.0;
 
 	BRDF tempBRDF;
-	std::vector<glm::mat4> transforms;
-	glm::mat4 identity, currMatrix, tempMat, helper,helper2,mvt;
-	identity = glm::mat4(1.0);
-	currMatrix= glm::mat4(1.0);
-	tempMat= glm::mat4(1.0);
-	helper= glm::mat4(1.0);
-	helper2= glm::mat4(1.0);
-	mvt= glm::mat4(1.0);
-	glm::vec3 tempVec;
+
+	std::vector<glm::dmat4> transforms;
+	transforms.clear();
+	transforms.push_back(glm::dmat4(1.0));
+	transforms.push_back(glm::dmat4(1.0));
+	transforms.push_back(glm::dmat4(1.0));
+	
+	glm::dmat4 identity, currMatrix, tempMat, helper,helper2,mvt;
+	identity = glm::dmat4(1.0);
+	currMatrix= glm::dmat4(1.0);
+	tempMat= glm::dmat4(1.0);
+	helper= glm::dmat4(1.0);
+	helper2= glm::dmat4(1.0);
+	mvt= glm::dmat4(1.0);
+	glm::dvec3 tempVec;
 
 	std::string line;
 	char command[MAX_CHARS];
@@ -93,7 +100,7 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
     /**************        CAMERA LOCATION **********/
     if (!strcmp(command, "camera")) {
       double lookfrom[3], lookat[3], up[3], fov ;
-      glm::vec3 lookfrom0,lookat0,up0;
+      glm::dvec3 lookfrom0,lookat0,up0;
 
       int num = sscanf(line.c_str(), "%s %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
 		       command, lookfrom, lookfrom+1, lookfrom+2,
@@ -127,26 +134,23 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 		fprintf(stderr, "sphere x y z radius\n") ;
 		exit(1) ;
 	  }
-	 tempVec =  glm::vec3((float)pos[0],(float)pos[1],(float)pos[2]);
+	 tempVec =  glm::dvec3((double)pos[0],(double)pos[1],(double)pos[2]);
 	 tempMat = glm::inverse(currMatrix);
-	 mvt = glm::transpose(tempMat);
+	 mvt = glm::inverseTranspose(currMatrix);
 	 tracer->addSphere(Sphere(tempVec, radius, Material(tempBRDF), tempMat, currMatrix, mvt));// makes a sphere with material props from the tempBRDF
     }
-
 	else if (!strcmp(command, "maxverts")) {
 	  int num = sscanf(line.c_str(), "%s %d", command, &maxverts) ;
 	  assert(num == 2) ; assert(maxverts > 0) ;
 	  assert(!strcmp(command,"maxverts")) ;
 	  assert(vert = new Vertex[maxverts]) ;
 	}
-
 	else if (!strcmp(command, "maxvertnorms")) {
 	  int num = sscanf(line.c_str(), "%s %d", command, &maxvertnorms) ;
 	  assert(num == 2) ; assert(maxvertnorms > 0) ;
 	  assert(!strcmp(command,"maxvertnorms")) ;
 	  assert(vertnorm = new VertexNormal[maxvertnorms]) ;
 	}
-
 	else if (!strcmp(command, "vertex")) {  // Add a vertex to the stack
 	  assert(maxverts) ; assert(curvert < maxverts) ;
 	  Vertex v ;
@@ -155,7 +159,6 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 	  vert[curvert] = v ;
 	  ++curvert ;
 	}
-
 	else if (!strcmp(command, "vertexnormal")) {  // Add a vertex to the stack with a normal
 	  assert(maxvertnorms) ; assert(curvertnorm < maxvertnorms) ;
 	  VertexNormal vn ;
@@ -168,7 +171,6 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 	  vertnorm[curvertnorm] = vn ;
 	  ++curvertnorm ;
 	}
-
         else if (!strcmp(command, "tri")) { // Triangle from 3 vertices
 	 int pts[3] ; 
 	 int num = sscanf(line.c_str(), "%s %d %d %d", command, pts, pts+1, pts+2) ;
@@ -203,20 +205,20 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 	  }
 
       //starts
-      glm::vec3 verts[3], temps[3];
-      glm::vec4 tempnormie;
+      glm::dvec3 verts[3], temps[3];
+      glm::dvec4 tempnormie;
       
       for(i = 0; i < 3; i++){
-    	  verts[i] = glm::vec3((float)vertex[i][0], (float)vertex[i][1],(float)vertex[i][2]);
-	  glm::vec4 temp = currMatrix*glm::vec4(verts[i],0);
+    	  verts[i] = glm::dvec3((double)vertex[i][0], (double)vertex[i][1],(double)vertex[i][2]);
+	  glm::dvec4 temp = currMatrix*glm::dvec4(verts[i],1);
 	  temps[i] = temp.xyz();
       }
-      glm::vec3 normie((float)normal[0], (float)normal[1], (float)normal[2]);
+      glm::dvec3 normie((double)normal[0], (double)normal[1], (double)normal[2]);
       tempMat = glm::inverse(currMatrix);
       tempMat = glm::transpose(tempMat);
-      tempnormie=tempMat*glm::vec4(normie,0);
+      tempnormie=tempMat*glm::dvec4(normie,0);
       tempnormie = glm::normalize(tempnormie);
-      glm::vec3 tempNormie(tempnormie);
+      glm::dvec3 tempNormie(tempnormie);
       Triangle t(temps, tempNormie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
       tracer->addTriangle(t);
       }
@@ -230,11 +232,11 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 	    assert(pts[i] >= 0 && pts[i] < maxvertnorms) ;
 	  }
 	  printf("trinormal\n");
-      glm::vec3 verts[3];
-      glm::vec3 normie[3];
+      glm::dvec3 verts[3];
+      glm::dvec3 normie[3];
       for(int i = 0; i < 3; i++){
-    		  verts[i] = glm::vec3((float)vertnorm[pts[i]].pos[0], (float)vertnorm[pts[i]].pos[1],(float)vertnorm[pts[i]].pos[2]);
-    		  normie[i] = glm::vec3((float)vertnorm[pts[i]].normal[0], (float)vertnorm[pts[i]].normal[1], (float)vertnorm[pts[i]].normal[2]);
+    		  verts[i] = glm::dvec3((double)vertnorm[pts[i]].pos[0], (double)vertnorm[pts[i]].pos[1],(double)vertnorm[pts[i]].pos[2]);
+    		  normie[i] = glm::dvec3((double)vertnorm[pts[i]].normal[0], (double)vertnorm[pts[i]].normal[1], (double)vertnorm[pts[i]].normal[2]);
       }
 
 	  double normal[3] ;
@@ -255,7 +257,7 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 		for (i = 0 ; i < 3 ; i++) normal[i] = vect3[i] / norm ;
 	  }
       Triangle t(verts, normie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
-      t.setFaceNormal(glm::vec3 ((float)normal[0], (float)normal[1], (float)normal[2]));
+      t.setFaceNormal(glm::dvec3 ((double)normal[0], (double)normal[1], (double)normal[2]));
       tracer->addTriangle(t);
 	}
 
@@ -268,10 +270,11 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 		fprintf(stderr, "translate x y z\n") ;
 		exit(1) ;
 	  }
-	  currMatrix = glm::translate(currMatrix,glm::vec3(x,y,z));
-	  //currMatrix.a03 += (float)x;
-	  //	currMatrix.a13 += (float)y;
-	  //currMatrix.a23 += (float)z;
+	  currMatrix = glm::translate(currMatrix,glm::dvec3(x,y,z));
+	  
+	  //currMatrix.a03 += (double)x;
+	  //	currMatrix.a13 += (double)y;
+	  //currMatrix.a23 += (double)z;
 	}
 
 	else if (!strcmp(command, "rotate")) {
@@ -281,12 +284,12 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 		fprintf(stderr, "rotate angle x y z\n") ;
 		exit(1) ;
 	  }
-	  glm::vec3 tempVec =glm::vec3 ((float)x,(float)y,(float)z);
+	  glm::dvec3 tempVec =glm::dvec3 ((double)x,(double)y,(double)z);
 	  tempVec = glm::normalize(tempVec);
-	  helper = glm::mat4();
-	  //helper.set_rot((float)ang*(float)PI/(float)180.0,tempVec);
-	  //float angle = (float)ang*(float)PI/(float)180.0;
-	  helper = glm::rotate((float)ang,tempVec);
+	  helper = glm::dmat4(1.0);
+	  //helper.set_rot((double)ang*(double)PI/(double)180.0,tempVec);
+	  double angle = (double)ang*(double)PI/(double)180.0;
+	  helper = glm::rotate(helper,(double)angle,tempVec);
 	  helper2=currMatrix;
 	  currMatrix=helper2*helper;
 	}
@@ -298,10 +301,10 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 			fprintf(stderr, "rotatex angle \n") ;
 			exit(1) ;
 		  }
-		  helper = glm::mat4();
-		  //helper.set_rotx((float)ang*(float)PI/(float)180.0);
-		  //float angle = (float)ang*(float)PI/(float)180.0;
-		  helper = glm::rotate((float)ang,glm::vec3(1,0,0));
+		  helper = glm::dmat4(1.0);
+		  //helper.set_rotx((double)ang*(double)PI/(double)180.0);
+		  double angle = (double)ang*(double)PI/(double)180.0;
+		  helper = glm::rotate(helper,(double)angle,glm::dvec3(1,0,0));
 		  helper2=currMatrix;
 		  currMatrix = helper2 * helper;
 		}
@@ -313,10 +316,10 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 				fprintf(stderr, "rotatey angle \n") ;
 				exit(1) ;
 			  }
-			  helper = glm::mat4();
-			  //helper.set_roty((float)ang*(float)PI/(float)180.0);
-			  //float angle = (float)ang*(float)PI/(float)180.0;
-			  helper = glm::rotate((float)ang,glm::vec3(0,1,0));
+			  helper = glm::dmat4(1.0);
+			  //helper.set_roty((double)ang*(double)PI/(double)180.0);
+			  double angle = (double)ang*(double)PI/(double)180.0;
+			  helper = glm::rotate(helper,(double)angle,glm::dvec3(0,1,0));
 			  helper2=currMatrix;
 			  currMatrix=helper2*helper;
 			}
@@ -328,10 +331,10 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 				fprintf(stderr, "rotatez angle \n") ;
 				exit(1) ;
 			  }
-			  helper = glm::mat4();
-			  //helper.set_rotz((float)ang*(float)PI/(float)180.0);
-			  // float angle = (float)ang*(float)PI/(float)180.0;
-			  helper = glm::rotate((float)ang,glm::vec3(0,0,1));
+			  helper = glm::dmat4(1.0);
+			  //helper.set_rotz((double)ang*(double)PI/(double)180.0);
+			  double angle = (double)angle*(double)PI/(double)180.0;
+			  helper = glm::rotate(helper,(double)ang,glm::dvec3(0,0,1));
 			  helper2=currMatrix;
 			  currMatrix = helper2*helper;
 			}
@@ -343,10 +346,10 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 		fprintf(stderr, "scale x y z\n") ;
 		exit(1) ;
 	  }
-	  helper = glm::mat4();
-	  helper[0][0]=(float)x;
-	  helper[1][1]=(float)y;
-	  helper[2][2]=(float)z;
+	  helper = glm::dmat4(1.0);
+	  helper[0][0]=(double)x;
+	  helper[1][1]=(double)y;
+	  helper[2][2]=(double)z;
 	  helper2=currMatrix;
 	  currMatrix = helper2 * helper;
 	}
@@ -380,13 +383,13 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
     /*************************************************/
     /***************  LIGHTS *******************/
      else if (!strcmp(command, "directional")) {
-	 float direction[4], color[4] ; color[3] = 1.0 ; direction[3] = 0.0 ;
-	 int num = sscanf(line.c_str(), "%s %f %f %f %f %f %f", command, direction, direction+1, direction+2, color, color+1, color+2) ;
+	 double direction[4], color[4] ; color[3] = 1.0 ; direction[3] = 0.0 ;
+	 int num = sscanf(line.c_str(), "%s %lf %lf %lf %lf %lf %lf", command, direction, direction+1, direction+2, color, color+1, color+2) ;
 	 assert(num == 7) ;
 	 
-	glm::vec3 temp(direction[0],direction[1],direction[2]);
-	glm::vec3 temp2=temp;
-	normalize(temp2);
+	glm::dvec3 temp(direction[0],direction[1],direction[2]);
+	glm::dvec3 temp2=temp;
+	glm::normalize(temp2);
 	Color tempC(color[0],color[1],color[2]);
 	Light* tempLight = new DirectionalLight(temp,tempC,temp2);
 	tempLight->m_idirl = true;
@@ -394,11 +397,11 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
    }
 
       else if (!strcmp(command, "point")) {
-	 float direction[4], color[4] ; color[3] = 1.0 ; direction[3] = 1.0 ;
-	 int num = sscanf(line.c_str(), "%s %f %f %f %f %f %f", command, direction, direction+1, direction+2, color, color+1, color+2) ;
+	 double direction[4], color[4] ; color[3] = 1.0 ; direction[3] = 1.0 ;
+	 int num = sscanf(line.c_str(), "%s %lf %lf %lf %lf %lf %lf", command, direction, direction+1, direction+2, color, color+1, color+2) ;
 	 assert(num == 7) ;
 	 
-	 glm::vec3 temp(direction[0],direction[1],direction[2]);
+	 glm::dvec3 temp(direction[0],direction[1],direction[2]);
 	 Color tempC((double)color[0],(double)color[1],(double)color[2]);
 	 Light* tempLight = new PointLight(temp,tempC,temp,attenuation[0],attenuation[1],attenuation[2]);
 	tempLight->m_idirl = false;
@@ -418,8 +421,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
      }
 
      else if (!strcmp(command, "ambient")) {
-       float ambient[4] ; ambient[3] = 1.0 ;
-       int num = sscanf(line.c_str(), "%s %f %f %f", command, ambient, ambient+1, ambient+2) ;
+       double ambient[4] ; ambient[3] = 1.0 ;
+       int num = sscanf(line.c_str(), "%s %lf %lf %lf", command, ambient, ambient+1, ambient+2) ;
        assert(num == 4) ;
        assert(!strcmp(command, "ambient")) ;
 
@@ -430,8 +433,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
     /*******************************************************/
     /****************** MATERIALS ************************/
      else if (!strcmp(command, "diffuse")) {
-       float diffuse[4] ; diffuse[3] = 1.0 ;
-       int num = sscanf(line.c_str(), "%s %f %f %f", command, diffuse, diffuse+1, diffuse+2) ;
+       double diffuse[4] ; diffuse[3] = 1.0 ;
+       int num = sscanf(line.c_str(), "%s %lf %lf %lf", command, diffuse, diffuse+1, diffuse+2) ;
        assert(num == 4) ; assert (!strcmp(command, "diffuse")) ;
 
        // changes the kd in the tempBRDF used to set primitives' material
@@ -439,8 +442,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
      }
 
      else if (!strcmp(command, "specular")) {
-       float specular[4] ; specular[3] = 1.0 ;
-       int num = sscanf(line.c_str(), "%s %f %f %f", command, specular, specular+1, specular+2) ;
+       double specular[4] ; specular[3] = 1.0 ;
+       int num = sscanf(line.c_str(), "%s %lf %lf %lf", command, specular, specular+1, specular+2) ;
        assert(num == 4) ; assert (!strcmp(command, "specular")) ;
        
        // changes the Ks in the tempBRDF used to set primitives' material
@@ -448,8 +451,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
      }
 
      else if (!strcmp(command, "shininess")) {
-       float shininess ;
-       int num = sscanf(line.c_str(), "%s %f", command, &shininess) ;
+       double shininess ;
+       int num = sscanf(line.c_str(), "%s %lf", command, &shininess) ;
        assert(num == 2) ; assert (!strcmp(command, "shininess")) ;
        
        // changes the s (shininess) in the tempBRDF used to set primitives' material
@@ -457,8 +460,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
      }
 
      else if (!strcmp(command, "emission")) {
-       float emission[4] ; emission[3] = 1.0 ;
-       int num = sscanf(line.c_str(), "%s %f %f %f", command, emission, emission+1, emission+2) ;
+       double emission[4] ; emission[3] = 1.0 ;
+       int num = sscanf(line.c_str(), "%s %lf %lf %lf", command, emission, emission+1, emission+2) ;
        assert(num == 4) ; assert (!strcmp(command, "emission")) ;
       
        // changes the Ke in the tempBRDF used to set primitives' material
@@ -466,8 +469,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
      }
 
      else if (!strcmp(command, "reflection")) {
-       float reflection[3];
-       int num = sscanf(line.c_str(), "%s %f %f %f", command, reflection, reflection+1, reflection+2) ;
+       double reflection[3];
+       int num = sscanf(line.c_str(), "%s %lf %lf %lf", command, reflection, reflection+1, reflection+2) ;
        assert(num == 4) ; assert (!strcmp(command, "reflection")) ;
 
        // changes the Kr in the tempBRDF used to set primitives' material

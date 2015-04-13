@@ -4,7 +4,7 @@ Triangle::Triangle() {
   // TODO Auto-generated constructor stub
 }
 
-Triangle::Triangle(glm::vec3 verts[3], glm::vec3 norm, Material m)
+Triangle::Triangle(glm::dvec3 verts[3], glm::dvec3 norm, Material m)
 {
 	for(int i = 0; i < 3; i++){
 		vertices[i] = verts[i];
@@ -14,7 +14,7 @@ Triangle::Triangle(glm::vec3 verts[3], glm::vec3 norm, Material m)
 	m_material = m;
 }
 
-Triangle::Triangle(glm::vec3 verts[3], glm::vec3 norms[3], Material m)
+Triangle::Triangle(glm::dvec3 verts[3], glm::dvec3 norms[3], Material m)
 {
 	for(int i = 0; i < 3; i++){
 		vertices[i] = verts[i];
@@ -23,7 +23,7 @@ Triangle::Triangle(glm::vec3 verts[3], glm::vec3 norms[3], Material m)
 	m_material = m;
 }
 
-void Triangle::setFaceNormal(glm::vec3 n){
+void Triangle::setFaceNormal(glm::dvec3 n){
 	face_normal = n;
 }
 
@@ -37,7 +37,7 @@ void Triangle::print(){
 	std::cout<<"c:"<<std::endl;
 	printVector(vertices[2]);
 }
-void Triangle::printVector(glm::vec3 q0){
+void Triangle::printVector(glm::dvec3 q0){
 	std::cout<<"("<<q0.x<<","<<q0.y<<","<<q0.z<<")"<<std::endl;
 }
 
@@ -84,7 +84,7 @@ bool Triangle::Intersects(Ray *r, Intersection *in){
 	t = -(f*akjb + e*jcal + d*blkc)/denom;
 	if (t >= .01 && t <=r->Gettmax() && !isnan(t))
 	{
-		glm::vec3 normal, v1v0,v2v0;
+		glm::dvec3 normal, v1v0,v2v0;
 		v1v0 = vertices[1] - vertices[0];
 		v2v0 = vertices[2] - vertices[0];
                 normal = glm::cross(v1v0,v2v0);

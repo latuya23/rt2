@@ -1,18 +1,18 @@
 #include "PointLight.h"
 
 PointLight::PointLight()
-	: Light("point light", glm::vec3(0,0,0) ,Color(0.0,0.0,0.0), glm::vec3(0,0,0),false)
+	: Light("point light", glm::dvec3(0,0,0) ,Color(0.0,0.0,0.0), glm::dvec3(0,0,0),false)
 {
 	SetAttenuation(1.0, 0.0, 0.0);//sets default attenuation to 1,0,0
 }
 
-PointLight::PointLight(glm::vec3 pos, Color c, glm::vec3 dir)
+PointLight::PointLight(glm::dvec3 pos, Color c, glm::dvec3 dir)
 	: Light("point light", pos, c, dir,false)
 {
 	SetAttenuation(1.0,0.0,0.0);//sets default attenuation to 1,0,0
 }
 
-PointLight::PointLight(glm::vec3 pos, Color c, glm::vec3 dir, double kc, double kl, double kq)
+PointLight::PointLight(glm::dvec3 pos, Color c, glm::dvec3 dir, double kc, double kl, double kq)
 	: Light("Point light", pos, c, dir, false)
 {
 	SetAttenuation(kc,kl,kq);
@@ -40,9 +40,9 @@ void PointLight::SetKq(double kq){
 	m_kq=kq;//set quadratic coefficient
 }
 
-glm::vec3 PointLight::GetAttenuation(){
+glm::dvec3 PointLight::GetAttenuation(){
 	//if u call this method you'll get the
 	//constant, linear, & quadratic coefficients
-	//in a glm::vec3 struct
-	return glm::vec3(m_kc,m_kl,m_kq);
+	//in a glm::dvec3 struct
+	return glm::dvec3(m_kc,m_kl,m_kq);
 }

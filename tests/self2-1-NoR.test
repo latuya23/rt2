@@ -10,70 +10,73 @@ camera 0 0 4 0 0 0 0 1 0 30
 
 
 directional 0.57735027 -0.57735027 -0.57735027 1 1 1
-directional -0.57735027  0.57735027  0.57735027 1 1 1
+directional -0.57735027  0.57735027  0.57735027 0 0 1
 
-pushTransform
+#pushTransform
 
-popTransform
-pushTransform
+#popTransform
+#pushTransform
 
 # Now specify the geometry 
-maxdepth 3
+maxdepth 1
 ambient .1 .1 .1
 diffuse 1 0 0 
 specular 1 1 1
 shininess 50.0
 reflection .9 .9 .9
 translate 0 0 -17
-rotate 1 0 0 45
-scale 4 2 1
+rotatex 45
+scale 4 2 2
 sphere 0 0 0 1.0
 
-popTransform
-pushTransform
+#popTransform
+#pushTransform
 
 translate -2 4 -17
-rotate 0 0 1 30
+rotate 0 -.707106 -.707106 45
+scale .5 1.5 1
 ambient .1 .1 .1
 diffuse 0 1 0 
 specular 1 1 1
-shininess 50.0
+shininess 128.0
 reflection .9 .9 .9
-sphere 0 0 0 1.5
+sphere 0 0 0 1.0
 
 popTransform
-pushTransform
+#pushTransform
 
 translate -2 -4 -17 1.5
+rotate 0 -.707106 .707106 45
+scale .5 1.5 1
 ambient .1 .1 .1
 diffuse 0 0 1 
 specular 1 1 1
 shininess 50.0
 reflection .9 .9 .9
-sphere 0 0 0 1.5
+sphere 0 0 0 1
 
-popTransform
-pushTransform
-
+#popTransform
+#pushTransform
 
 translate 2 4 -17
-rotatex -45
-scale 1.5 1.5 1.5
+rotate 0 .707106 .707106 45
+scale .5 1.5 1
 ambient .1 .1 .1
 diffuse 1 1 0 
 specular 1 1 1
 shininess 50.0
 reflection .9 .9 .9
-sphere 0 0 0 1
+sphere 0 0 0 1.0
 
-popTransform
-pushTransform
-
+#popTransform
+#pushTransform
 
 translate 2 -4 -17
+rotate 0 .707106 -.707106 45
+scale .5 1.5 1
 ambient .1 .1 .1
 diffuse 0 1 1 
 specular 1 1 1
 shininess 50.0
 reflection .9 .9 .9
-sphere 0 0 0 1.5
+sphere 0 0 0 1.0

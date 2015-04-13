@@ -4,7 +4,7 @@ Light::Light() {
 	m_Light="undefined light";
 }
 
-Light::Light(std::string light, glm::vec3 pos, Color c, glm::vec3 dir, bool midirl){
+Light::Light(std::string light, glm::dvec3 pos, Color c, glm::dvec3 dir, bool midirl){
 	SetLight(pos,c,dir,midirl);
 	m_Light=light;
 }
@@ -13,30 +13,30 @@ Light::~Light() {
 	// TODO Auto-generated destructor stub
 }
 
-void Light::SetLight(glm::vec3 pos, Color c, glm::vec3 dir, bool midirl){
+void Light::SetLight(glm::dvec3 pos, Color c, glm::dvec3 dir, bool midirl){
 	m_position=pos;
 	m_lightColor=c;
-	m_dir= dir * -1.0f; //reverse normalized dir of light
+	m_dir= dir * -1.0; //reverse normalized dir of light
 	m_idirl=midirl;
 }
 
-void Light::GenerateLightRay(glm::vec3 inPoint, Ray *lRay, glm::vec3 surfNormal){
+void Light::GenerateLightRay(glm::dvec3 inPoint, Ray *lRay, glm::dvec3 surfNormal){
 	if(m_idirl){
-		glm::vec3 temp=surfNormal;
-		temp = temp * .01f;  // make ray closer to light ray = inpoint+.0001*m_dir
-		glm::vec3 temp2;
+		glm::dvec3 temp=surfNormal;
+		temp = temp * .01;  // make ray closer to light ray = inpoint+.0001*m_dir
+		glm::dvec3 temp2;
 		temp2 = temp + inPoint; // add something in the direction of the light
 		*lRay = Ray(temp2, m_dir, inPoint); //generate ray from inPoint towards reverse light direction
 	}
 	else{
 		double dist;//tmax for ray
-		glm::vec3 temp;//m_dir = position of point light
+		glm::dvec3 temp;//m_dir = position of point light
 		temp= m_position- inPoint; //direction of in to light
 		dist = sqrt(temp.x*temp.x+temp.y*temp.y+temp.z*temp.z);
 		temp = glm::normalize(temp); //normalized direction of ray to light
-		glm::vec3 temp2=surfNormal;
-		temp2 = temp2* .01f;
-		glm::vec3 temp3;
+		glm::dvec3 temp2=surfNormal;
+		temp2 = temp2* .01;
+		glm::dvec3 temp3;
 		temp3 = temp2 + inPoint; //add something in the direction of the light then shoot the ray
 		*lRay = Ray(temp3,temp, inPoint, dist); //generate ray from temp3 towards the light with tmax dist
 	}

@@ -16,8 +16,8 @@ public:
 	virtual ~RayTracer();
 	void SetDepth(int maxD);
 	int GetMaxDepth(){return m_Depth;}
-	Ray CreateReflectRay(glm::vec3 rDir, glm::vec3 surfNormal, glm::vec3 startP);
-	Ray CreateRefractRay(glm::vec3 rDir, glm::vec3 surfNormal, glm::vec3 startP);
+	Ray CreateReflectRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP);
+	Ray CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP);
 	void traceRay(Ray *r, int depth, Color* tColor);
 	void addTriangle(Triangle tv);
 	void addSphere(Sphere s);
@@ -35,8 +35,8 @@ public:
 	// Ks = specular
 	// hi = half angle vector for the light
 	// s = shininess
-	Color Shading(Color lColor,Color diffuse,Color specular, glm::vec3 lightDir,
-			glm::vec3 normal,glm::vec3 fromEye,double s);
+	Color Shading(Color lColor,Color diffuse,Color specular, glm::dvec3 lightDir,
+			glm::dvec3 normal,glm::dvec3 fromEye,double s);
 
 private:
 	std::vector<Triangle> myTriangles;

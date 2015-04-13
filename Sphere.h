@@ -6,7 +6,7 @@
 class Sphere :public Primitive{
 public:
 	Sphere();
-	Sphere(glm::vec3 pos, double r, Material m, glm::mat4 inverse, glm::mat4 transform, glm::mat4 invT);
+	Sphere(glm::dvec3 pos, double r, Material m, glm::dmat4 inverse, glm::dmat4 transform, glm::dmat4 invT);
 	bool Intersects(Ray *r, Intersection *i);
 	bool IntersectsP(Ray *r, Intersection *i);
 	void print();
@@ -24,10 +24,10 @@ private:
 	static int next_id;
 	int m_id;
 	double radius;
-	glm::vec3 m_pos;
-	glm::mat4 m_inverse;
-	glm::mat4 m_transform;
-	glm::mat4 m_invT;
+	glm::dvec3 m_pos;
+	glm::dmat4 m_inverse;
+	glm::dmat4 m_transform;
+	glm::dmat4 m_invT;
 	bool first;
 };
 

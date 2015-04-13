@@ -49,5 +49,5 @@ specular 1 1 1
 shininess 50.0
 reflection .9 .9 .9
 translate -4 0 -17
-rotate 1 0 0 45
+#rotate 1 0 0 45
 sphere 0 0 0 1.5
