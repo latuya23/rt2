@@ -13,7 +13,7 @@ std::ifstream inputfile;
 std::ifstream tests;
 
 int main(int argc, char* argv[]) {
-  tests.open(argv[1]);
+  tests.open("./testFiles");
   std::string line;
   int i = 0;
   while (tests.good() && i<TESTS){
