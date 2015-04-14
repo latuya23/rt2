@@ -14,7 +14,7 @@ std::ifstream tests;
 
 int main(int argc, char* argv[]) {
   if (argc == 1){
-    tests.open("./testFiles");
+    tests.open("./namePaths");
   }
   else if (argc == 2){
     tests.open(argv[1]);
@@ -37,14 +37,14 @@ int main(int argc, char* argv[]) {
     i++;
   }
   for (int names=0; names<TESTS; names++){
-    Film			myImage;
-    Camera			myCamera;
+    Film			myImage;// = NULL;
+    Camera			myCamera;// = NULL;
     std::vector<Primitive> 	myPrimitives(1, Primitive());
     std::vector<Triangle> 	myTriangles(1, Triangle());
-    Parser			myParser;
+    Parser			myParser;// = NULL;
     Sample			currSample(0,0);
-    Sampler			mySampler;
-    RayTracer			myTracer;
+    Sampler			mySampler;// = NULL;
+    RayTracer			myTracer;// = NULL;
     Ray			currRay(glm::dvec3(0,0,0), glm::dvec3(0,0,0), glm::dvec3(0,0,0));
     Color			currColor;
     outPut[names].insert(0,std::string("./tests/"));
@@ -72,6 +72,14 @@ int main(int argc, char* argv[]) {
     //myImage.WriteImage(outPut[names]);
     inputfile.close();
     std::cout << "finished " << outPut[names] << std::endl;
+    //delete myImage;
+    //delete myCamera;
+    myPrimitives.clear();
+    myTriangles.clear();
+    //delete myParser;
+    //delete mySampler;
+    //delete myTracer;
+    //delete currColor;
   }
   std::cout << "finished everything" << std::endl;
   return 0;

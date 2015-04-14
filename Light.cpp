@@ -35,7 +35,7 @@ void Light::GenerateLightRay(glm::dvec3 inPoint, Ray *lRay, glm::dvec3 surfNorma
 		dist = sqrt(temp.x*temp.x+temp.y*temp.y+temp.z*temp.z);
 		temp = glm::normalize(temp); //normalized direction of ray to light
 		glm::dvec3 temp2=surfNormal;
-		temp2 = temp2* .01;
+		temp2 = temp2 * .01;
 		glm::dvec3 temp3;
 		temp3 = temp2 + inPoint; //add something in the direction of the light then shoot the ray
 		*lRay = Ray(temp3,temp, inPoint, dist); //generate ray from temp3 towards the light with tmax dist

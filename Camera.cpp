@@ -33,7 +33,7 @@ void Camera::GenerateRay(Sample sample, Ray* ray){
 		//Create a ray starting from the camera that passes through the
         //corresponding pixel (sample.x, sample.y) on the image plane.
         //(from last week discussion, and also section 10.1 in Shirley’s book)]
-		double thetaInRadians = ((double)m_fov*.5d)*3.14159265/180.0;
+		double thetaInRadians = ((double)m_fov*.5)*3.14159265/180.0;
 		double beta = 
 		  (double)tan(thetaInRadians)*
 		  ((m_height*.5) - (double)sample.GetY())/(double)(m_height*.5);

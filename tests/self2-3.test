@@ -1,7 +1,7 @@
 # Self Test 
 #size 1366 768
-#size 640 480
-size 160 120
+size 640 480
+#size 160 120
 #size 80 60
 # Now specify the camera.  This is what you should implement.
 

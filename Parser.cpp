@@ -74,9 +74,9 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 
 	std::vector<glm::dmat4> transforms;
 	transforms.clear();
-	transforms.push_back(glm::dmat4(1.0));
-	transforms.push_back(glm::dmat4(1.0));
-	transforms.push_back(glm::dmat4(1.0));
+	//transforms.push_back(glm::dmat4(1.0));
+	//transforms.push_back(glm::dmat4(1.0));
+	//transforms.push_back(glm::dmat4(1.0));
 	
 	glm::dmat4 identity, currMatrix, tempMat, helper,helper2,mvt;
 	identity = glm::dmat4(1.0);
@@ -135,9 +135,17 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 		exit(1) ;
 	  }
 	 tempVec =  glm::dvec3((double)pos[0],(double)pos[1],(double)pos[2]);
+	 std::cout << "tempMat before" << std::endl;
+	 printMatrix(tempMat);
+	 std::cout << "inverse of currMatrix" << std::endl;
 	 tempMat = glm::inverse(currMatrix);
+	 printMatrix(tempMat);
+	 std::cout << "inversetranspose of currMatrix" << std::endl;
 	 mvt = glm::inverseTranspose(currMatrix);
-	 tracer->addSphere(Sphere(tempVec, radius, Material(tempBRDF), tempMat, currMatrix, mvt));// makes a sphere with material props from the tempBRDF
+	 printMatrix(mvt);
+	 tracer->addSphere(Sphere(tempVec, radius,
+				  Material(tempBRDF),
+				  tempMat, currMatrix, mvt));// makes a sphere with material props from the tempBRDF
     }
 	else if (!strcmp(command, "maxverts")) {
 	  int num = sscanf(line.c_str(), "%s %d", command, &maxverts) ;
@@ -270,11 +278,15 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 		fprintf(stderr, "translate x y z\n") ;
 		exit(1) ;
 	  }
-	  currMatrix = glm::translate(currMatrix,glm::dvec3(x,y,z));
-	  
+	  helper2 = currMatrix;
+	  currMatrix = helper2 * glm::translate(glm::dmat4(1.0),glm::dvec3(x,y,z));
+	  //currMatrix[0][3] += (double)x;
+	  //currMatrix[1][3] += (double)y;
+	  //currMatrix[2][3] += (double)z;
 	  //currMatrix.a03 += (double)x;
 	  //	currMatrix.a13 += (double)y;
 	  //currMatrix.a23 += (double)z;
+	  printMatrix(currMatrix);
 	}
 
 	else if (!strcmp(command, "rotate")) {
@@ -355,7 +367,9 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
 	}
 
 	else if (!strcmp(command, "pushTransform")) {
-	 transforms.push_back(currMatrix); // Push the current matrix on the stack as in OpenGL
+	  glm::dmat4 newMat(1.0);
+	  newMat = currMatrix;
+	 transforms.push_back(newMat); // Push the current matrix on the stack as in OpenGL
 	  }
 
 	else if (!strcmp(command, "popTransform")) {
