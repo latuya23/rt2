@@ -4,18 +4,21 @@ PointLight::PointLight()
 	: Light("point light", glm::dvec3(0,0,0) ,Color(0.0,0.0,0.0), glm::dvec3(0,0,0),false)
 {
 	SetAttenuation(1.0, 0.0, 0.0);//sets default attenuation to 1,0,0
+	m_lightType = Light::POINT_LIGHT;
 }
 
 PointLight::PointLight(glm::dvec3 pos, Color c, glm::dvec3 dir)
 	: Light("point light", pos, c, dir,false)
 {
 	SetAttenuation(1.0,0.0,0.0);//sets default attenuation to 1,0,0
+	m_lightType = Light::POINT_LIGHT;
 }
 
 PointLight::PointLight(glm::dvec3 pos, Color c, glm::dvec3 dir, double kc, double kl, double kq)
 	: Light("Point light", pos, c, dir, false)
 {
 	SetAttenuation(kc,kl,kq);
+	m_lightType = Light::POINT_LIGHT;
 }
 
 PointLight::~PointLight() {

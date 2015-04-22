@@ -6,8 +6,6 @@ size 640 480
 # Now specify the camera.  This is what you should implement.
 
 camera 0 0 4 0 0 0 0 1 0 30
-	
-
 
 directional 0.57735027 -0.57735027 -0.57735027 1 1 1
 directional -0.57735027  0.57735027  0.57735027 1 1 1
@@ -77,3 +75,4 @@ specular 1 1 1
 shininess 50.0
 reflection .9 .9 .9
 sphere 0 0 0 1.5
+

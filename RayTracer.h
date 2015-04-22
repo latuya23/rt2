@@ -44,6 +44,7 @@ private:
 	std::vector<Light*> myLights;
 	int m_Depth;
 	bool isCloser(Ray *r, Intersection i1, Intersection i2);
+	bool check4Intersection(Ray* ray);
 };
 
 #endif /* RAYTRACER_H_ */

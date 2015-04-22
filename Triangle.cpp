@@ -95,7 +95,7 @@ bool Triangle::Intersects(Ray *r, Intersection *in){
 	return false;
 }
 
-bool Triangle::IntersectsP(Ray *r, Intersection *in){
+bool Triangle::IntersectsP(Ray *r){
 	double t;
 	double a=vertices[0].x -vertices[1].x;
 	double b=vertices[0].y -vertices[1].y;

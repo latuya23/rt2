@@ -33,4 +33,14 @@ spheres4-3.test
 spheres4-4.test
 spheres4-5.test
 self2-1-NoR.test
+with_anti-aliasing.test
+with_attenuation.test
+without_anti-aliasing.test
+without_attenuation.test
+scene_last-1.test
+scene_last-2.test
+scene_last.test
+scene_last-allRefl.test
+area_light-0.test
+
 

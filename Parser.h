@@ -12,6 +12,7 @@
 #include <vector>
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "AreaLight.h"
 #include "Material.h"
 
 class Parser{

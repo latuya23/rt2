@@ -1,6 +1,8 @@
 #include "Sphere.h"
 #include "nv_math.h"
 
+#define MIN_THRESHOLD .001
+
 Sphere::Sphere() {
   // TODO Auto-generated constructor stub
 }
@@ -8,7 +10,7 @@ Sphere::Sphere() {
 Sphere::Sphere(glm::dvec3 pos, double r, Material m,
 	       glm::dmat4 inverse, glm::dmat4 transform, glm::dmat4 invT){
   m_pos = pos;
-  radius = r;
+  m_radius = r;
   m_material = m;
   m_inverse = inverse;
   m_transform = transform;
@@ -73,7 +75,7 @@ bool Sphere::Intersects(Ray *q, Intersection *i){
   double a, b, c , d;
   a = (double)glm::dot(qDir, qDir);
   b = (double)2.0*glm::dot(qDir, qminC);
-  c = (double)glm::dot(qminC,qminC)- (radius*radius);
+  c = (double)glm::dot(qminC,qminC)- (m_radius*m_radius);
   d = SolveQuadratic2(a,b,c);
   if(d < 0 || isnan(d) || d< .0000001 || d>tRay.Gettmax() || d<.01) {
     return false;
@@ -81,7 +83,7 @@ bool Sphere::Intersects(Ray *q, Intersection *i){
   double a2, b2, c2, d2;
   a2 = (double)glm::dot(qDir2, qDir2);
   b2 = (double)2.0*glm::dot(qDir2, qminC2);
-  c2 = (double)glm::dot(qminC2,qminC2) - (radius*radius);
+  c2 = (double)glm::dot(qminC2,qminC2) - (m_radius*m_radius);
   d2 = SolveQuadratic2(a2,b2,c2);
   if(d2 < 0 || isnan(d2) || d2< .001 || d2>dtRay.Gettmax() || d<.01){
     return false;
@@ -90,9 +92,9 @@ bool Sphere::Intersects(Ray *q, Intersection *i){
   vec3 inPoint2 = GetVec3FromGLM(dtRay.evaluate((double)d2)); //intersection point in OS and tOS=tWS
   vec3 normal; //normal in object space
   sub(normal, inPoint, GetVec3FromGLM(m_pos)); //normal in object space
-  normal.x=normal.x/radius; //normalize normal
-  normal.y=normal.y/radius;
-  normal.z=normal.z/radius;
+  normal.x=normal.x/m_radius; //normalize normal
+  normal.y=normal.y/m_radius;
+  normal.z=normal.z/m_radius;
   vec3 normals,inPoints,inPoints2;
   mult_dir(normals,GetMat4FromGLM(m_invT),normal); //(M^-1)^T * normal OS = normal in ws
   mult(inPoints, GetMat4FromGLM(m_transform), inPoint); // inPoint WS = M * intersection point in object space
@@ -102,28 +104,30 @@ bool Sphere::Intersects(Ray *q, Intersection *i){
   return true;
 }
 
-bool Sphere::IntersectsP(Ray *q, Intersection *i){
-  vec3 temp1, temp2, temp3;
-  mult(temp1, GetMat4FromGLM(m_inverse), GetVec3FromGLM(q->Getq0())); ////M^-1 * r0 ;r0 of ray World Space to object space
-  mult_dir(temp2,GetMat4FromGLM(m_inverse), GetVec3FromGLM(q->GetD())); //M^-1 * dir; dir of ray World Space to object space
-  mult(temp3, GetMat4FromGLM(m_inverse),GetVec3FromGLM(q->Getp0()));//M^-1 * p0 ; p0 of ray World Space to OS
-  normalize(temp2);//normalize dir in OS
-  Ray tRay (GetGLMFromVec3(temp1),GetGLMFromVec3(temp2),
-	    GetGLMFromVec3(temp3),q->Gettmax() );//make a ray in OS
-  glm::dvec3 qDir = tRay.GetD(); //direction of ray in OS
-  glm::dvec3 qminC = tRay.Getp0() - m_pos; //// p0 in OS - center of the sphere in OS
-  double a, b, c , d;
-  a = (double)glm::dot(qDir, qDir);
-  b = (double)2.0*glm::dot(qDir, qminC);
-  c = (double)glm::dot(qminC,qminC)-(radius*radius);
-  d = SolveQuadratic(a,b,c);
-  if(d < 0 || isnan(d) || d<.01 || d>tRay.Gettmax() ) {
+//3d game engine design pg 700-701
+bool Sphere::IntersectsP(Ray* ray){
+  glm::dvec4 newCenter = m_transform * glm::dvec4(m_pos,1.0);
+  //std::cout << "newcenter:" << newCenter.x <<","<<newCenter.y<<","<<newCenter.z << std::endl;
+  glm::dvec3 center(newCenter.x,newCenter.y,newCenter.z);
+  //std::cout << "center:" << center.x <<","<<center.y<<","<<center.z << std::endl;
+  glm::dvec3 delta = ray->Getq0() - center;
+  double length2SphSqr = glm::dot(delta,delta);
+  double a0 = length2SphSqr - (m_radius * m_radius);
+  double rayLengthSqr = ray->Gettmax()*ray->Gettmax();
+  if (a0 <= MIN_THRESHOLD || length2SphSqr > rayLengthSqr){
+    //ray origin is inside or on the sphere. We don't want to intersect if inside
+    //std::cout << "ray origin inside sphere" <<std::endl;
     return false;
   }
-  if(d==-2.0){//switch n1 n2
-    
+  //ray origin is outside the sphere 
+  float a1 = glm::dot(ray->GetD(), delta);
+  if (a1 >= MIN_THRESHOLD){
+    //ray is directed away from the sphere
+    //std::cout << "ray direction away from sphere" << std::endl;
+    return false;
   }
-  return true;
+  float discr = a1 * a1 - a0;
+  return discr >= MIN_THRESHOLD; // if discriminant > 0 we have a hit. we don't care where.
 }
 
 double Sphere::SolveQuadratic(double a, double b, double c){

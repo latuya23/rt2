@@ -11,7 +11,7 @@ public:
 	virtual ~Triangle();
 	void print();
 	bool Intersects(Ray *r, Intersection *i);
-	bool IntersectsP(Ray *r, Intersection *i);
+	bool IntersectsP(Ray *r);
 	void printVector(glm::dvec3 v);
 	void setFaceNormal(glm::dvec3 n);
 

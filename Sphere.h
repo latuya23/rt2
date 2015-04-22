@@ -8,7 +8,7 @@ public:
 	Sphere();
 	Sphere(glm::dvec3 pos, double r, Material m, glm::dmat4 inverse, glm::dmat4 transform, glm::dmat4 invT);
 	bool Intersects(Ray *r, Intersection *i);
-	bool IntersectsP(Ray *r, Intersection *i);
+	bool IntersectsP(Ray *r);
 	void print();
 	int GetSphereId(){return m_id;}
 	virtual ~Sphere();
@@ -23,7 +23,7 @@ private:
 
 	static int next_id;
 	int m_id;
-	double radius;
+	double m_radius;
 	glm::dvec3 m_pos;
 	glm::dmat4 m_inverse;
 	glm::dmat4 m_transform;

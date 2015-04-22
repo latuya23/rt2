@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -pipe -g -Wall
 LDFLAGS = -g -Wall -pipe
 TARGET = raytracer
-CXXFILES = Scene.cpp Camera.cpp BRDF.cpp Color.cpp Light.cpp Ray.cpp Material.cpp Intersection.cpp Sample.cpp Parser.cpp Sampler.cpp Primitive.cpp Sphere.cpp Triangle.cpp PointLight.cpp RayTracer.cpp DirectionalLight.cpp Film.cpp nv_algebra.cpp Transform.cpp
+CXXFILES = Scene.cpp Camera.cpp BRDF.cpp Color.cpp Light.cpp Ray.cpp Material.cpp Intersection.cpp Sample.cpp Parser.cpp Sampler.cpp Primitive.cpp Sphere.cpp Triangle.cpp PointLight.cpp RayTracer.cpp DirectionalLight.cpp Film.cpp nv_algebra.cpp Transform.cpp AreaLight.cpp
 
 OBJECTS = $(CXXFILES:.cpp=.o)
 

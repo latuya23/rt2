@@ -3,21 +3,55 @@
 #include <assert.h>
 #include <math.h>
 #include <fstream>
+#include <getopt.h>
+#include <stdio.h>
 #include "Parser.h"
 #include "Film.h"
 
-int TESTS=35;
+int TESTS=1000;
 int maxDepth=3;
 
 std::ifstream inputfile;
 std::ifstream tests;
+std::ofstream file;
+std::ifstream src;
+std::ofstream dst;
+const char* fileName = "currTest";
+std::string fileNameNew = "currTest1";
+int result = -1;
 
 int main(int argc, char* argv[]) {
   if (argc == 1){
     tests.open("./namePaths");
   }
-  else if (argc == 2){
-    tests.open(argv[1]);
+  else if (argc == 3){ 
+    int opt;
+    while ((opt = getopt(argc,argv,"f:")) != -1)
+      switch(opt) {
+       case 'f':
+	 std::cout <<"reading " << fileName <<std::endl;
+	 src.open(fileName, std::ios::binary);
+	 dst.open(fileNameNew.c_str(), std::ios::binary);
+	 dst << argv[2] << std::endl;
+	 dst << src.rdbuf();
+	 src.close();
+	 dst.close();
+	 //result = rename(fileName,"trash");
+	 result = remove(fileName);
+	 assert(result == 0);
+	 result = rename(fileNameNew.c_str(),fileName);
+	 assert(result ==0);
+	break;
+       case '?':
+	 std::cout << "usage is: "<< std::endl;
+	 std::cout << "-f : for passing filename" <<std::endl;
+	 break;
+      default:
+	std::cout<<std::endl;
+	abort();
+	break;
+      }
+    tests.open(fileName);
     TESTS = 1;
   }
   else {
