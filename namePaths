@@ -33,6 +33,7 @@ spheres4-3.test
 spheres4-4.test
 spheres4-5.test
 self2-1-NoR.test
+self.Mod0.test
 with_anti-aliasing.test
 with_attenuation.test
 without_anti-aliasing.test
@@ -42,5 +43,6 @@ scene_last-2.test
 scene_last.test
 scene_last-allRefl.test
 area_light-0.test
-
+0areaTest.test
+1areaTest.test
 

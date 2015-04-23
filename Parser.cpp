@@ -399,7 +399,6 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       glm::normalize(temp2);
       Color tempC(color[0],color[1],color[2]);
       Light* tempLight = new DirectionalLight(temp,tempC,temp2);
-      tempLight->m_idirl = true;
       tracer->AddLight(tempLight);
     }
     
@@ -408,12 +407,12 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       int num = sscanf(line.c_str(), "%s %lf %lf %lf %lf %lf %lf",
 		       command, position, position+1, position+2,
 		       color, color+1, color+2) ;
-      assert(num == 7) ;
+      assert(num == 7);
       
       glm::dvec3 temp(position[0],position[1],position[2]);
       Color tempC(color[0],color[1],color[2]);
-      Light* tempLight = new PointLight(temp,tempC,temp,attenuation[0],attenuation[1],attenuation[2]);
-      tempLight->m_idirl = false;
+      Light* tempLight = new PointLight(temp,tempC,temp);
+      //((PointLight*)tempLight)->SetAttenuation(attenuation[0],attenuation[1],attenuation[2]);
       tracer->AddLight(tempLight);
     }
 
@@ -430,7 +429,6 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       Color tempC(color[0],color[1],color[2]);
       Light* tempLight = new AreaLight(temp,tempC,temp,length,samples);
       ((AreaLight*)tempLight)->SetAttenuation(attenuation[0],attenuation[1],attenuation[2]);
-      tempLight->m_idirl = false;
       tracer->AddLight(tempLight);
     }
     

@@ -34,7 +34,7 @@ vertex +10 +10 +10
 vertex -10 +10 +10
 
 #arealight is defined by a pos a color and a length (it's a square)
-arealight 0 5 -5 1 1 1 1 25
+arealight 0 5 -5 1 1 1 2 49
 
 
 ambient .1 .1 .1 
@@ -80,5 +80,5 @@ ambient .1 .1 .1
 diffuse 0 0 1
 specular 1.0 1.0 1.0
 #reflection .8 .8 .8
-sphere 0 -5 -5 2.5
+sphere 0 -3 -5 2.5
 

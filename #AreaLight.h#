@@ -10,7 +10,7 @@ class AreaLight: public Light {
   int m_sqrtSamples;
   double m_delta;
  public:
-  AreaLight(glm::dvec3 pos=glm::dvec3(0), Color c= Color(0.0,0.0,0.0),
+  AreaLight(glm::dvec3 pos=glm::dvec3(0), Color c = Color(0.0,0.0,0.0),
 	    glm::dvec3 dir=glm::dvec3(0), double length = 2.0,
 	    int samples=9);
   virtual ~AreaLight();

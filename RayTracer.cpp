@@ -61,34 +61,36 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
     // cast a shadow ray to a light source at the intersection point & put it in tempRay
     myLights[i]->GenerateLightRays(closest.GetPosition(), &tempRays, closest.GetNormal());
 
-
+    float invSamples = 1.0/tempRays.size();
     for(std::vector<Ray*>::iterator it=tempRays.begin();
 	it!=tempRays.end(); ++it) {
       // determine if the light is visible
       foundAny = check4Intersection(*it);
-      if (foundAny){
-	shadow+=1.0;//add shadow
+      if (!foundAny){
+	shadow=invSamples;
+	//add shadow
+	//foundAny=false;
+	// if we didn't find any
+	//  do shading calculation for this
+	// light source
+	// Li(Kd max(li*n,0)+Ks(n*hi)^s) stars are dot products
+	// Li = light color
+	// Kd = diffuse
+	// li = light direction
+	// n = surface normal
+	// Ks = specular
+	// hi = half angle vector for the light
+	// s = shininess
+	*tColor += shadow*
+	  Shading(myLights[i]->GetColor(),closestBRDF.GetKd(),
+		  closestBRDF.GetKs(),(*it)->GetD(),
+		  closest.GetNormal(),r->GetD(),
+		  closestBRDF.GetS()); 
       }
     }
-    shadow = 1 - (shadow / tempRays.size());
+    //shadow = 1 - (shadow / tempRays.size());
     
-    //foundAny=false;
-    // if we didn't find any
-    //  do shading calculation for this
-    // light source
-    // Li(Kd max(li*n,0)+Ks(n*hi)^s) stars are dot products
-    // Li = light color
-    // Kd = diffuse
-    // li = light direction
-    // n = surface normal
-    // Ks = specular
-    // hi = half angle vector for the light
-    // s = shininess
-    //if(!foundAny){
-    *tColor += shadow*Shading(myLights[i]->GetColor(),closestBRDF.GetKd(),
-			      closestBRDF.GetKs(),tempRays[0]->GetD(),
-			      closest.GetNormal(),r->GetD(),
-			      closestBRDF.GetS()); 
+   
     shadow=0.0;
     tempRays.clear();
   }

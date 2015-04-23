@@ -16,25 +16,19 @@ class Light {
     DIRECTIONAL_LIGHT,
     AREA_LIGHT
   };
-  bool m_idirl;
-  Light();
-  Light(std::string light, glm::dvec3 pos, Color c, glm::dvec3 dir, bool midirl);
+  Light(glm::dvec3 pos=glm::dvec3(0), Color c = Color(0.0,0.0,0.0),
+	glm::dvec3 dir=glm::dvec3(0));
   virtual ~Light();
-  std::string GetName(){return m_Light;}
   glm::dvec3 GetPos(){return m_position;}
   Color GetColor(){return m_lightColor;}
   glm::dvec3 GetDir(){return m_dir;} //negative normalized direction of light
-  bool GetMIDir(){return m_idirl;}
-  void SetLight(glm::dvec3 pos, Color c, glm::dvec3 dir, bool midirl);
-  void GenerateLightRays(glm::dvec3 inPoint, std::vector<Ray*>* rays,
-			glm::dvec3 surfNormal);
+  void SetLight(glm::dvec3 pos, Color c, glm::dvec3 dir);
+  virtual void GenerateLightRays(glm::dvec3 inPoint, std::vector<Ray*>* rays,
+				 glm::dvec3 surfNormal) = 0;
   virtual glm::dvec3 GetAttenuation() = 0;
   void Print();
-  virtual bool IsPointLight();
-  virtual bool IsDirLight();
-  //virtual glm::dvec3 GetSamplePos() = 0;
+  const char* GetLightTypeStr(LIGHT_TYPE lightType);
  protected:
-  std::string m_Light;
   Color m_lightColor;
   glm::dvec3 m_position;
   glm::dvec3 m_dir;
