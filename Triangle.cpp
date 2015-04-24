@@ -1,8 +1,6 @@
 #include "Triangle.h"
 
-Triangle::Triangle() {
-  // TODO Auto-generated constructor stub
-}
+int Triangle::next_tri_id = 0;
 
 Triangle::Triangle(glm::dvec3 verts[3], glm::dvec3 norm, Material m)
 {

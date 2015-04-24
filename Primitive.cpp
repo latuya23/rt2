@@ -1,11 +1,8 @@
 #include "Primitive.h"
 
+int Primitive::next_prim_id = 0;
 Primitive::Primitive() {
-	
-}
-
-Primitive::Primitive(glm::dvec3 v) {
-
+  m_prim_id = Primitive::next_primitive_id();
 }
 
 void Primitive::print(){
@@ -15,9 +12,4 @@ void Primitive::print(){
 
 Primitive::~Primitive() {
 	// TODO Auto-generated destructor stub
-}
-
-bool Primitive::intersects(Ray *r, Intersection *i){
-	
-	return true;
 }

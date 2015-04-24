@@ -24,10 +24,7 @@ Ray::~Ray() {
 }
 
 glm::dvec3 Ray::evaluate(double t){
-	glm::dvec3 temp=m_dir;
-	temp = temp*(double)t;
-	temp = m_p0 + temp;
-	return temp;
+	return  m_p0 + m_dir*t;
 }
 void Ray::SetRay(glm::dvec3 q0, glm::dvec3 dir, glm::dvec3 p0){
 	m_q0 = q0;

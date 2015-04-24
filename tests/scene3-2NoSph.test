@@ -1,11 +1,11 @@
-# Test Scene 3 
+# Test Scene 3 no spheres 
 # Intended to show transforms
 # I know it's not the most exciting of scenes...
 
-size 640 480 
+#size 640 480 
 #size 320 240
 #size 160 120
-#size 80 60
+size 80 60
 camera 0 -4 4 0 -1 0 0 1 1 45
 
 
@@ -128,52 +128,3 @@ tri 0 3 2
 tri 0 2 1
 tri 4 5 6 
 tri 4 6 7 
-
-
-# Now draw the spheres
-
-ambient 0 1 0 
-popTransform
-pushTransform 
-translate  0 0 0.5
-rotate 1 0 0 90
-#rotate 0 0 1 45
-scale 1.0 0.25 0.25 
-sphere 0 0 0 1
-
-ambient 1 0 0
-popTransform
-pushTransform 
-translate  0 0 0.5
-rotate 0 0 1 90
-scale 1.0 0.25 0.25 
-sphere 0 0 0 1
-
-ambient 0 1 1 
-popTransform
-pushTransform
-translate -1.5 -.8 0.65
-scale 0.4 0.4 0.4
-sphere 0 0 0 1
-
-ambient 0 1 1 
-popTransform
-pushTransform
-translate 1.5 -.8 0.65
-scale 0.4 0.4 0.4
-sphere 0 0 0 1
-
-ambient 0 1 1 
-popTransform
-pushTransform
-translate 1.5 .8 0.65
-scale 0.4 0.4 0.4
-sphere 0 0 0 1
-
-ambient 0 1 1 
-popTransform
-pushTransform
-translate -1.5 .8 0.65
-scale 0.4 0.4 0.4
-sphere 0 0 0 1
-

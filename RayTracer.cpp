@@ -10,6 +10,9 @@ RayTracer::RayTracer(int maxD){
 
 RayTracer::~RayTracer() {
 	// TODO Auto-generated destructor stub
+  for (unsigned int i = 0; i< myPrims.size(); i++){
+    delete myPrims[i];
+  }
 }
 
 void RayTracer::SetDepth(int maxD){
@@ -30,18 +33,12 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
   std::vector<Ray*> tempRays;
   closest = Intersection(glm::dvec3(0,0,0), tempM, 100000.0, glm::dvec3(0,0,0));
   bool foundAny = false;
-  for(unsigned int i = 0; i < myTriangles.size(); i++){
-    if(myTriangles[i].Intersects(r, &temp)){
+  for (unsigned int i = 0; i < myPrims.size(); i++){
+    if (myPrims[i]->Intersects(r,&temp)){
       foundAny = true;
-      if(isCloser(r, temp, closest))
+      if(isCloser(r,temp,closest)){
 	closest = temp;
-    }
-  }
-  for(unsigned int i = 0; i < mySpheres.size(); i++){
-    if(mySpheres[i].Intersects(r, &temp)){
-      foundAny = true;
-      if(isCloser(r, temp, closest))
-	closest = temp;
+      }
     }
   }
   if(!foundAny){
@@ -118,13 +115,8 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
 }
 
 bool RayTracer::check4Intersection(Ray* ray){
-  for (unsigned int k = 0; k< myTriangles.size();k++){
-    if ( myTriangles[k].IntersectsP(ray)){
-      return true;
-    }
-  }
-  for(unsigned int k = 0; k < mySpheres.size(); k++){
-    if(mySpheres[k].IntersectsP(ray)){
+  for(unsigned int i = 0; i<myPrims.size();i++){
+    if (myPrims[i]->IntersectsP(ray)){
       return true;
     }
   }
@@ -153,7 +145,7 @@ Ray RayTracer::CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dve
       return refRay;
     }
   glm::dvec3 tempDir, tempN, trDir;
-  tempDir = tempDir * (double)n;
+  tempDir = tempDir * n;
   tempN = tempN * (double)(n+sqrt(1.0-sinT2));
   trDir = tempDir - tempN;
   trDir = glm::normalize(trDir);
@@ -185,7 +177,7 @@ Color RayTracer::Shading(Color lColor,Color diffuse,Color specular, glm::dvec3 l
   fromEye = fromEye * -1.0;
   tempV = lightDir + fromEye; // lightDir + fromEye
   tempV = glm::normalize(tempV); //half angle = normalize(lightDir + fromEye)
-  temp1=(double)glm::dot(normal, lightDir); //n*li
+  temp1= glm::dot(normal, lightDir); //n*li
   
   if (temp1>1.1){
     temp1=1.0;
@@ -196,7 +188,7 @@ Color RayTracer::Shading(Color lColor,Color diffuse,Color specular, glm::dvec3 l
   if (temp1<0.0 || isnan(temp1) || temp1< .0000001 || temp1>1000000.0){
     temp1=0.0;
   }
-  temp2=(double)glm::dot(normal, tempV); //n*hi
+  temp2=glm::dot(normal, tempV); //n*hi
   temp2= pow(temp2,s); //(n*hi)^s
   
   if (temp2>1.1){
@@ -215,27 +207,19 @@ bool RayTracer::isCloser(Ray *r, Intersection t1, Intersection t2){
   return false;
 }
 
-void RayTracer::addTriangle(Triangle tv){
-  myTriangles.push_back(tv);
-}
-
-void RayTracer::addSphere(Sphere s){
-  mySpheres.push_back(s);
+void RayTracer::AddPrimitive(Primitive* prim){
+  myPrims.push_back(prim);
 }
 
 void RayTracer::AddLight(Light* l){
   myLights.push_back(l);
 }
 
-void RayTracer::printSpheres(){
-  for(unsigned int i = 0; i < mySpheres.size(); i++){
-    mySpheres[i].print();
+void RayTracer::PrintPrims(){
+  for (unsigned int i = 0; i < myPrims.size(); i++){
+    myPrims[i]->print();
   }
-}
-void RayTracer::printTriangles(){
-  for(unsigned int i = 0; i < myTriangles.size(); i++)
-    myTriangles[i].print();
-}
+ }
 
 void RayTracer::PrintLight(){
   for (unsigned int i=0; i< myLights.size(); i++)

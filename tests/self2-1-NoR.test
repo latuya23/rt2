@@ -44,6 +44,7 @@ sphere 0 0 0 1.0
 popTransform
 pushTransform
 
+#blue sphere
 translate -2 -4 -17 1.5
 rotate 0 -.707106 .707106 45
 scale .5 1.5 1
@@ -57,6 +58,7 @@ sphere 0 0 0 1
 popTransform
 pushTransform
 
+#yellow sphere
 translate 2 4 -17
 rotate 0 .707106 .707106 45
 scale .5 1.5 1
@@ -79,3 +81,4 @@ specular 1 1 1
 shininess 50.0
 reflection .9 .9 .9
 sphere 0 0 0 1.0
+

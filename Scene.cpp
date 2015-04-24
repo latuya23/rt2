@@ -73,8 +73,6 @@ int main(int argc, char* argv[]) {
   for (int names=0; names<TESTS; names++){
     Film			myImage;// = NULL;
     Camera			myCamera;// = NULL;
-    std::vector<Primitive> 	myPrimitives(1, Primitive());
-    std::vector<Triangle> 	myTriangles(1, Triangle());
     Parser			myParser;// = NULL;
     Sample			currSample(0,0);
     Sampler			mySampler;// = NULL;
@@ -106,14 +104,6 @@ int main(int argc, char* argv[]) {
     //myImage.WriteImage(outPut[names]);
     inputfile.close();
     std::cout << "finished " << outPut[names] << std::endl;
-    //delete myImage;
-    //delete myCamera;
-    myPrimitives.clear();
-    myTriangles.clear();
-    //delete myParser;
-    //delete mySampler;
-    //delete myTracer;
-    //delete currColor;
   }
   std::cout << "finished everything" << std::endl;
   return 0;

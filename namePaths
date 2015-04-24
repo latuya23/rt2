@@ -13,6 +13,8 @@ self1.test
 spheres2.test
 spheres3.test
 scene3-2.test
+scene3-2NoSph.test
+scene3-2NoScale.test
 self2.test
 self3.test
 self4.test
@@ -33,6 +35,7 @@ spheres4-3.test
 spheres4-4.test
 spheres4-5.test
 self2-1-NoR.test
+self2-1-NoRNoScale.test
 self.Mod0.test
 with_anti-aliasing.test
 with_attenuation.test

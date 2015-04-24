@@ -27,7 +27,6 @@ void printMatrix(glm::dmat4 m){
   std::cout<<std::endl;
 }
 static int tnumber;
-int Sphere::next_id=0;
 Vertex * vert=NULL;
 VertexNormal * vertnorm=NULL;
 int maxverts=0,maxvertnorms=0;
@@ -136,9 +135,9 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       //std::cout << "inversetranspose of currMatrix" << std::endl;
       mvt = glm::inverseTranspose(currMatrix);
       //printMatrix(mvt);
-      tracer->addSphere(Sphere(tempVec, radius,
-			       Material(tempBRDF),
-			       tempMat, currMatrix, mvt));// makes a sphere with material props from the template BRDF
+      tracer->AddPrimitive(new Sphere(tempVec, radius,
+				      Material(tempBRDF),
+				      tempMat, currMatrix, mvt));// makes a sphere with material props from the template BRDF
   }
     else if (!strcmp(command, "maxverts")) {
       int num = sscanf(line.c_str(), "%s %d", command, &maxverts) ;
@@ -221,8 +220,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       tempnormie=tempMat*glm::dvec4(normie,0);
       tempnormie = glm::normalize(tempnormie);
       glm::dvec3 tempNormie(tempnormie);
-      Triangle t(temps, tempNormie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
-      tracer->addTriangle(t);
+      // makes a triangle with material props from the tempBRDF
+      tracer->AddPrimitive(new Triangle (temps, tempNormie, Material(tempBRDF)));
     }
     
     else if (!strcmp(command, "trinormal")) {
@@ -259,9 +258,9 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       else {
 	for (i = 0 ; i < 3 ; i++) normal[i] = vect3[i] / norm ;
       }
-      Triangle t(verts, normie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
-      t.setFaceNormal(glm::dvec3 (normal[0], normal[1], normal[2]));
-      tracer->addTriangle(t);
+      Triangle* triangle = new Triangle(verts, normie, Material(tempBRDF));// makes a triangle with material props from the tempBRDF
+      triangle->setFaceNormal(glm::dvec3 (normal[0], normal[1], normal[2]));
+      tracer->AddPrimitive(triangle);
     }
 
     /******************************************/

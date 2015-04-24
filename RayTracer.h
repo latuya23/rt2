@@ -19,11 +19,9 @@ public:
 	Ray CreateReflectRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP);
 	Ray CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP);
 	void traceRay(Ray *r, int depth, Color* tColor);
-	void addTriangle(Triangle tv);
-	void addSphere(Sphere s);
+	void AddPrimitive(Primitive* prim);
 	void AddLight(Light* l);
-	void printTriangles();
-	void printSpheres();
+	void PrintPrims();
 	void PrintLight();
 
 	//  do shading calculation
@@ -39,8 +37,9 @@ public:
 			glm::dvec3 normal,glm::dvec3 fromEye,double s);
 
 private:
-	std::vector<Triangle> myTriangles;
-	std::vector<Sphere> mySpheres;
+	//std::vector<Triangle> myTriangles;
+	//std::vector<Sphere> mySpheres;
+	std::vector<Primitive*> myPrims;
 	std::vector<Light*> myLights;
 	int m_Depth;
 	bool isCloser(Ray *r, Intersection i1, Intersection i2);
