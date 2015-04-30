@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include "Material.h"
+#include "glm/gtc/matrix_inverse.hpp"
 #include <glm/glm.hpp>
 
 class Primitive {
@@ -14,6 +15,8 @@ class Primitive {
   Material m_material;
   static int next_prim_id;
   int m_prim_id;
+  glm::dmat4 m_transform;
+  glm::dmat4 m_invTT;//inverse transpose transform
  public:
   Primitive();
   virtual ~Primitive();
@@ -21,7 +24,7 @@ class Primitive {
     next_prim_id++;
     return next_prim_id;
   }
-  virtual void print() = 0;
+  virtual void Print() = 0;
   virtual bool Intersects(Ray *ray, Intersection *inters) = 0;
   virtual bool IntersectsP(Ray* ray) = 0;
   Material GetMaterial(){return m_material;}

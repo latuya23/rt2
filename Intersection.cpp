@@ -28,3 +28,12 @@ Intersection::~Intersection() {
 void Intersection::SetNormal(glm::dvec3 n){
 	normal = n;
 }
+
+void Intersection::Print(){
+  std::cout<< "ipos: " << glm::to_string(position)<<std::endl;
+  std::cout<< "t: " << m_t << std::endl;
+  std::cout<< "normal: " << glm::to_string(normal)<<std::endl;
+  std::cout<< "Material: ";
+  m_material.GetBRDF().PrintBRDF();
+  std::cout<<std::endl;
+}

@@ -1,5 +1,6 @@
 #define GLM_SWIZZLE
 #include "Parser.h"
+#include "Model.h"
 #include <assert.h>
 #include <fstream>
 #include <string>
@@ -41,10 +42,15 @@ int parsed = 0 ;
 void Parser::initialparse(std::ifstream &inputfile, int& sizex, int& sizey) {
   std::string line;
   char command[MAX_CHARS];
+  unsigned int commentNumber = 0;
   while (inputfile.good()){
     getline (inputfile, line);
     if (inputfile.eof()) {std::cout << "Nothing in file \n"<<std::endl; exit(1);};
-    if (line[0] == '#') continue; //comment lines
+    if (line[0] == '#') {
+      std::cout << "Comment # is: " << commentNumber << std::endl;
+      commentNumber++;
+      continue;
+    } //comment lines
     int num = sscanf(line.c_str(), "%s", command);
     if (num != 1) continue; //Blank lines etc.
     else break;
@@ -81,13 +87,23 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
   glm::dvec3 tempVec;
   std::string line;
   char command[MAX_CHARS];
+  unsigned int commentNumber = 0;
   while (!inputfile.eof()) {
     getline(inputfile, line);
-    if (inputfile.eof()) break;
-    if (line[0]=='#') continue; //comment lines
-    int num = sscanf (line.c_str(), "%s", command);
-    if (num != 1) continue; // Blank lines;
-    // Now, we simply parse the file by looking at the first line for the various commands
+    if (inputfile.eof()) {
+      break;
+    }
+    if (line[0]=='#') {
+      std::cout << "Comment # is: " << commentNumber << std::endl;
+      std::cout << "Comment: " << line << std::endl;
+      commentNumber++;
+      continue; //comment lines
+    }
+      int num = sscanf (line.c_str(), "%s", command);
+      if (num != 1) {
+	continue; // Blank lines;
+      }
+	// Now, we simply parse the file by looking at the first line for the various commands
     /**************        CAMERA LOCATION **********/
     if (!strcmp(command, "camera")) {
       double lookfrom[3], lookat[3], up[3], fov ;
@@ -113,9 +129,34 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       up0.z=up[2];
       cam->SetCamera(lookfrom0,lookat0,up0,fov);
     }
-    
     /****************************************/
     /***********  GEOMETRY *******************/
+    else if (!strcmp(command, "model")) {
+      char fileName[MAX_CHARS];
+      char ccwVerts[MAX_CHARS];
+      ccwVerts[0] = 0;
+      fileName[0] =0;
+      bool ccw = true;
+      int num = sscanf(line.c_str(),
+		       "%s %s %s",
+		       command, fileName, ccwVerts);
+      if(num != 3) {
+	fprintf(stderr, "model filename ccw\n");
+	exit(1);
+      }
+      
+      fprintf(stdout,"ccwVerts: %s \n",ccwVerts);
+      if (strcmp(ccwVerts, "ccw") == 0){ 
+	std::cout << "counter clockwise vertices " << std::endl;
+	ccw = true;
+      }
+      else if (strcmp(ccwVerts, "cw") == 0){
+	std::cout << "clockwise vertices " << std::endl;
+	ccw = false;
+      }
+      printMatrix(currMatrix);
+      tracer->AddPrimitive(new Model(fileName,Material(tempBRDF),currMatrix,ccw));
+    }
     else if (!strcmp(command, "sphere")) {
       double radius ; // Syntax is sphere x y z radius
       double pos[3] ;
@@ -221,6 +262,7 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       tempnormie = glm::normalize(tempnormie);
       glm::dvec3 tempNormie(tempnormie);
       // makes a triangle with material props from the tempBRDF
+      std::cout<<glm::to_string(tempNormie)<<std::endl;
       tracer->AddPrimitive(new Triangle (temps, tempNormie, Material(tempBRDF)));
     }
     

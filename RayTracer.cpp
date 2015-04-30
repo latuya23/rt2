@@ -6,12 +6,28 @@ RayTracer::RayTracer() {
 
 RayTracer::RayTracer(int maxD){
 	SetDepth(maxD);
+	avoidShadows = false;
+	avoidAllLightButKaKe = false;
 }
 
 RayTracer::~RayTracer() {
 	// TODO Auto-generated destructor stub
   for (unsigned int i = 0; i< myPrims.size(); i++){
     delete myPrims[i];
+  }
+}
+
+void RayTracer::SetDebugNoShadows(bool noShadows){
+  avoidShadows = noShadows;
+  if (noShadows){
+    std::cout<<"debugging no shadows"<<std::endl;
+  }
+}
+
+void RayTracer::SetDebugNoLightButKaKe(bool kaKeOnly){
+  avoidAllLightButKaKe = kaKeOnly;
+  if (kaKeOnly){
+    std::cout<<"debugging no light only ambient and emission"<<std::endl;
   }
 }
 
@@ -47,20 +63,27 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
   }
   // else there is an intersection
   closestBRDF = closest.GetMaterial().GetBRDF(); // get the BRDF from the closest intersection
-  *tColor += closestBRDF.GetKa(); //add the Ka ambient of material
-  *tColor += closestBRDF.GetKe(); //add the Ke emission of material
+  if (depth == 0){
+    *tColor += closestBRDF.GetKa(); //add the Ka ambient of material
+    *tColor += closestBRDF.GetKe(); //add the Ke emission of material
+  }
   // loop through all light sources
   // for an intersection
   // cast a shadow ray to all lights at the intersection
   // & determine if they are visible
   double shadow =0.0;
   for (unsigned int i=0; i< myLights.size(); i++){
+    if (avoidAllLightButKaKe){
+      continue;
+    }
     // cast a shadow ray to a light source at the intersection point & put it in tempRay
     myLights[i]->GenerateLightRays(closest.GetPosition(), &tempRays, closest.GetNormal());
-
     float invSamples = 1.0/tempRays.size();
     for(std::vector<Ray*>::iterator it=tempRays.begin();
 	it!=tempRays.end(); ++it) {
+      if (avoidShadows){
+	continue;
+      }
       // determine if the light is visible
       foundAny = check4Intersection(*it);
       if (!foundAny){
@@ -86,15 +109,13 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
       }
     }
     //shadow = 1 - (shadow / tempRays.size());
-    
-   
     shadow=0.0;
     tempRays.clear();
   }
-
   // Handle mirror reflections
   tempKr = closestBRDF.GetKr();
-  if ( (tempKr.GetR()>0.0) || (tempKr.GetG()>0.0) || (tempKr.GetB()>0.0) ) {
+  if ( ((tempKr.GetR()>0.0) || (tempKr.GetG()>0.0) ||
+       (tempKr.GetB()>0.0)) && avoidReflections == false ) {
     Ray reflectRay = CreateReflectRay(r->GetD(), closest.GetNormal(), closest.GetPosition());
     traceRay(&reflectRay, depth+1, &tempColor); // Make a recursive call to trace the reflected ray
     tempColor = tempKr*tempColor;
@@ -103,12 +124,13 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
   
   // Handle refractions
   tempKt = closestBRDF.GetKt();
-  if (tempKt>0.0 && tempKt<=1.0){
+  if (tempKt>1.0 && avoidRefractions == false){
     //std::cout<<tempKt<<std::endl;
-    Ray refractRay = CreateRefractRay(r->GetD(),closest.GetNormal(),closest.GetPosition());
+    Ray refractRay = CreateRefractRay(r->GetD(),closest.GetNormal(),
+				      closest.GetPosition(),depth);
     
     traceRay(&refractRay, depth+1, &tempColor); //recursive call
-    //tempColor =
+    //tempColor *= 
     *tColor += tempColor;
   }
   return;
@@ -124,37 +146,38 @@ bool RayTracer::check4Intersection(Ray* ray){
 }
 
 Ray RayTracer::CreateReflectRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP){
-  glm::dvec3 refDir;
-  refDir = glm::reflect(rDir,surfNormal);
-  glm::dvec3 tempVS=surfNormal;
-  tempVS = tempVS * .01;
-  glm::dvec3 startP2;
-  startP2 = tempVS+startP;
-  Ray refRay(startP2,refDir,startP);
+  glm::dvec3 refDir = glm::reflect(rDir,surfNormal);
+  Ray refRay(startP+(surfNormal*.01),refDir,startP);
   return refRay; 
 }
 
-Ray RayTracer::CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP){
-  double n = 1.33;
-  //double cosI = glm::dot(surfNormal, rDir);
-  double cosI = glm::dot(surfNormal,rDir);
-  double sinT2 = n*n*(1.0-cosI*cosI);
-  if (sinT2 > 1.0)
-    {
-      Ray refRay(glm::dvec3(0,0,0),glm::dvec3(0,0,0),glm::dvec3(0,0,0));
-      return refRay;
-    }
-  glm::dvec3 tempDir, tempN, trDir;
-  tempDir = tempDir * n;
-  tempN = tempN * (double)(n+sqrt(1.0-sinT2));
-  trDir = tempDir - tempN;
-  trDir = glm::normalize(trDir);
-  
-  glm::dvec3 tempVS=surfNormal;
-  tempVS = tempVS * -.01;
-  glm::dvec3 startP2;
-  startP2 = tempVS + startP;
-  Ray refRay(startP2,trDir,startP);
+Ray RayTracer::CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal,
+				glm::dvec3 startP, int depth){
+  double n1Overn2 = 0.0;
+  if (depth % 2 == 1){
+    n1Overn2 = .7519;
+    //n1Overn2 = 1.33;
+    surfNormal = -surfNormal; 
+  }
+  else{
+    // n1Overn2 = .7519;
+    n1Overn2 = 1.33;
+    //surfNormal = -surfNormal; 
+  }
+  //double cosI = glm::dot(surfNormal,rDir) * -1.0;
+  //double sinT2 = n1Overn2*n1Overn2*(1.0-cosI*cosI);
+  //if (sinT2>= 1.0)
+  //  {
+  //    Ray refRay(glm::dvec3(0,0,0),glm::dvec3(0,0,0),glm::dvec3(0,0,0));
+  //    return refRay;
+  //  }
+  //glm::dvec3 tempDir, tempN, trDir;
+  //tempDir = rDir * n1Overn2;
+  //tempN = surfNormal * (n1Overn2+sqrt(1.0-sinT2));
+  //trDir = tempDir - tempN;
+  //trDir = glm::normalize(trDir);
+  glm::dvec3 refDir = glm::normalize(glm::refract(rDir,surfNormal,n1Overn2));
+  Ray refRay(startP,refDir,startP);
   return refRay;
 }
 
@@ -217,7 +240,7 @@ void RayTracer::AddLight(Light* l){
 
 void RayTracer::PrintPrims(){
   for (unsigned int i = 0; i < myPrims.size(); i++){
-    myPrims[i]->print();
+    myPrims[i]->Print();
   }
  }
 

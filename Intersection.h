@@ -2,6 +2,7 @@
 #define INTERSECTION_H_
 
 #include "Material.h"
+#include "glm/gtx/string_cast.hpp"
 #include <glm/glm.hpp>
 
 class Intersection {
@@ -16,6 +17,7 @@ public:
 	float GetT(){return m_t;}
 	glm::dvec3 GetPosition(){return position;}
 	int GetId(){return m_p_id;}
+	void Print();
 private:
 	Material m_material;
 	double m_t;

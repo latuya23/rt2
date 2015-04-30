@@ -3,6 +3,11 @@
 #define MIN_THRESHOLD .001
 int Sphere::next_sph_id = 0;
 
+Sphere::Sphere(glm::dvec3 pos, double radius){
+  m_pos = pos;
+  m_radius = radius;
+}
+
 Sphere::Sphere(glm::dvec3 pos, double r, Material m,
 	       glm::dmat4 inverse, glm::dmat4 transform, glm::dmat4 invT){
   m_pos = pos;
@@ -12,6 +17,10 @@ Sphere::Sphere(glm::dvec3 pos, double r, Material m,
   m_transform = transform;
   m_invT=invT;
   m_sph_id= Sphere::next_sphere_id();
+}
+
+Sphere::~Sphere() {
+	// TODO Auto-generated destructor stub
 }
 
 //3d game engine design pg 699
@@ -83,11 +92,7 @@ bool Sphere::IntersectsP(Ray* ray){
   return discr >= MIN_THRESHOLD; // if discriminant > 0 we have a hit. we don't care where.
 }
 
-Sphere::~Sphere() {
-	// TODO Auto-generated destructor stub
-}
-
-void Sphere::print(){
+void Sphere::Print(){
 	std::cout<<"\n\n"<<std::endl;
 	const float *pSource = (const float*)glm::value_ptr(m_inverse);
 	std::cout<<std::endl;

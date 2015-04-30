@@ -88,7 +88,7 @@ void Film::WriteImage(std::string writeTo){
 			r=(int) max*temp.GetR();
 			g=(int) max*temp.GetG();
 			b=(int) max*temp.GetB();
-			outf<<std::setw(3)<<r<<std::setw(4)<<g<<std::setw(4)<<b<<"   ";
+			outf<<std::setw(4)<<r<<std::setw(4)<<g<<std::setw(4)<<b<<" ";
 		}
 	}
 }

@@ -25,7 +25,7 @@ void Triangle::setFaceNormal(glm::dvec3 n){
 	face_normal = n;
 }
 
-void Triangle::print(){
+void Triangle::Print(){
 	std::cout<<"i am triangle!"<<std::endl;
 	std::cout<<"vertices:"<<std::endl;
 	std::cout<<"a:"<<std::endl;
@@ -34,6 +34,8 @@ void Triangle::print(){
 	printVector(vertices[1]);
 	std::cout<<"c:"<<std::endl;
 	printVector(vertices[2]);
+	std::cout<<"normal:"<<std::endl;
+	printVector(face_normal);
 }
 void Triangle::printVector(glm::dvec3 q0){
 	std::cout<<"("<<q0.x<<","<<q0.y<<","<<q0.z<<")"<<std::endl;
@@ -80,15 +82,15 @@ bool Triangle::Intersects(Ray *r, Intersection *in){
 	}
 
 	t = -(f*akjb + e*jcal + d*blkc)/denom;
-	if (t >= .01 && t <=r->Gettmax() && !isnan(t))
+	if (t > .01 && t <=r->Gettmax() && !isnan(t))
 	{
-		glm::dvec3 normal, v1v0,v2v0;
-		v1v0 = vertices[1] - vertices[0];
-		v2v0 = vertices[2] - vertices[0];
-                normal = glm::cross(v1v0,v2v0);
-                normal = glm::normalize(normal);
-		*in = Intersection (r->evaluate(t), m_material, t, face_normal);
-		return true;
+	  glm::dvec3 normal, v1v0,v2v0;
+	  v1v0 = vertices[1] - vertices[0];
+	  v2v0 = vertices[2] - vertices[0];
+	  normal = glm::cross(v1v0,v2v0);
+	  normal = glm::normalize(normal);
+	  *in = Intersection (r->evaluate(t), m_material, t, face_normal);
+	  return true;
 	}
 	return false;
 }

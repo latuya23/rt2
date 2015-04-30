@@ -11,7 +11,7 @@ public:
 			next_tri_id++;
 			return next_tri_id;
 		}
-	virtual void print();
+	virtual void Print();
 	virtual bool Intersects(Ray *r, Intersection *i);
 	virtual bool IntersectsP(Ray *r);
 	void printVector(glm::dvec3 v);

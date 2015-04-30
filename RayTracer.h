@@ -10,19 +10,21 @@
 
 class RayTracer {
 public:
-
 	RayTracer();
 	RayTracer(int maxD);
 	virtual ~RayTracer();
 	void SetDepth(int maxD);
 	int GetMaxDepth(){return m_Depth;}
 	Ray CreateReflectRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP);
-	Ray CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dvec3 startP);
+	Ray CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal,
+			     glm::dvec3 startP,int depth);
 	void traceRay(Ray *r, int depth, Color* tColor);
 	void AddPrimitive(Primitive* prim);
 	void AddLight(Light* l);
 	void PrintPrims();
 	void PrintLight();
+	void SetDebugNoShadows(bool noShadows);
+	void SetDebugNoLightButKaKe(bool kaKeOnly);
 
 	//  do shading calculation
 	// Li(Kd max(li*n,0)+Ks(n*hi)^shininess) stars are dots
@@ -37,8 +39,10 @@ public:
 			glm::dvec3 normal,glm::dvec3 fromEye,double s);
 
 private:
-	//std::vector<Triangle> myTriangles;
-	//std::vector<Sphere> mySpheres;
+	bool avoidReflections;
+	bool avoidRefractions;
+	bool avoidShadows;
+	bool avoidAllLightButKaKe;
 	std::vector<Primitive*> myPrims;
 	std::vector<Light*> myLights;
 	int m_Depth;

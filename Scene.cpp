@@ -18,15 +18,17 @@ std::ifstream src;
 std::ofstream dst;
 const char* fileName = "currTest";
 std::string fileNameNew = "currTest1";
-int result = -1;
+bool avoidShadows = false;
+bool avoidAllLightButKaKe = false;
 
 int main(int argc, char* argv[]) {
   if (argc == 1){
     tests.open("./namePaths");
   }
-  else if (argc == 3){ 
+  else if (argc >= 3){ 
     int opt;
-    while ((opt = getopt(argc,argv,"f:")) != -1)
+    int result = -1;
+    while ((opt = getopt(argc,argv,"def:")) != -1)
       switch(opt) {
        case 'f':
 	 std::cout <<"reading " << fileName <<std::endl;
@@ -42,6 +44,14 @@ int main(int argc, char* argv[]) {
 	 result = rename(fileNameNew.c_str(),fileName);
 	 assert(result ==0);
 	break;
+	case 'd':
+	 std::cout <<"no shadows " << fileName <<std::endl;
+	 avoidShadows = true;
+	 break;
+        case 'e':
+	 std::cout <<"no lights " << fileName <<std::endl;
+	 avoidAllLightButKaKe = true;
+	 break;
        case '?':
 	 std::cout << "usage is: "<< std::endl;
 	 std::cout << "-f : for passing filename" <<std::endl;
@@ -92,7 +102,9 @@ int main(int argc, char* argv[]) {
     myParser.parsefile(inputfile, &myCamera, &myTracer, &maxDepth);
     myTracer.SetDepth(maxDepth);
     std::cout<<"maxDepth: "<<maxDepth<<std::endl;
-    assert(maxDepth>=1);
+    assert(maxDepth>=1 && maxDepth <=4);
+    myTracer.SetDebugNoShadows(avoidShadows);
+    myTracer.SetDebugNoLightButKaKe(avoidAllLightButKaKe);
     while(mySampler.GetSample(&currSample)){
       currColor.SetColor(0.0,0.0,0.0); // reset currColor to 0 every time
       myCamera.GenerateRay(currSample,&currRay);

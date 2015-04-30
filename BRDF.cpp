@@ -10,7 +10,7 @@ BRDF::BRDF() {
 	//s shininess default to 0.0
 	//kt refraction
 	Color temp(0.0,0.0,0.0);
-	SetBRDF(Color(0.8,0.8,0.8),temp,Color(0.2,0.2,0.2),temp,temp, 0.0,0.0);
+	SetBRDF(Color(0.8,0.8,0.8),temp,Color(0.2,0.2,0.2),temp,temp, 0.0,1.0);
 }
 
 BRDF::BRDF(Color kd, Color ks, Color ka, Color ke,Color kr, double s, double kt){

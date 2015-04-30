@@ -48,4 +48,9 @@ scene_last-allRefl.test
 area_light-0.test
 0areaTest.test
 1areaTest.test
-
+2areaTestRefl.test
+3triangle.test
+4box.test
+5dragon.test
+6bun.test
+7dragonRefl.test

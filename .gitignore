@@ -11,6 +11,6 @@ raytracer
 #ignore jpg files
 *.jpg
 #ignore data folder
-#/data/*
+/models/*
 #except for ply files
-#!/data/*.ply
+!/models/*.ply
