@@ -49,8 +49,13 @@ area_light-0.test
 0areaTest.test
 1areaTest.test
 2areaTestRefl.test
-3triangle.test
+3triangles.test
 4box.test
 5dragon.test
 6bun.test
 7dragonRefl.test
+8teapot.test
+9teapotNTriRefl.test
+10sphsRefractions.test
+
+

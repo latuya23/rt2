@@ -32,7 +32,7 @@ Model::~Model(){
     delete (*m_triangles)[i];
   }
   delete m_triangles;
-  delete faceList;
+  //delete faceList;
 }
 
 void Model::setModelTransform(glm::dmat4 mat){
@@ -103,28 +103,6 @@ bool Model::IntersectsPTriangles(Ray* ray){
     }
   }
   return false;
-}
-
-void Model::calcBSphere(glm::dvec3 *center, double *radius, FaceList *fl){
-  double maxDistance = 0.0;
-  for( int i = 0; i < fl->vc-1; i++ ){
-    for(int j = i + 1; j < fl->vc; j++){
-      glm::dvec3 a = *fl->vertices[i];
-      glm::dvec3 b = *fl->vertices[j];
- 
-      glm::dvec3 temp = a-b;
-      double distance = glm::dot(temp,temp);
-      if( distance > maxDistance){
-       double t = .5;
-       *center = glm::dvec3((a+b)*t);
-        *radius = sqrt(distance) * 0.5;
-        maxDistance = distance;
-      }
-    }
-  }
-  //std::cout << "center: "<<std::endl;
-  //std::cout << *center << std::endl;
-  //std::cout << m_modelCenter.x << "," << m_modelCenter.y <<","<<m_modelCenter.z << std::endl;
 }
 
 void Model::Print(){
@@ -234,24 +212,17 @@ bool Model::readModel (bool ccwVerts){
     }
   }
   modelStream.close();
-  //std::cout << "got here" << std::endl;
-  //glm::dvec3 halfVector = (m_maxs-m_mins)*.5;
-  //m_modelCenter = m_mins + halfVector;
-  //double sphRadius = glm::length(halfVector);
-  double sphRadius;
-  calcBSphere(&m_modelCenter, &sphRadius,faceList);
-  //std::cout << "center: " << m_modelCenter.x <<","<<m_modelCenter.y<<","<<m_modelCenter.z << std::endl;
-  std::cout << "radius: " << sphRadius << std::endl;
-  //exit(0);
-  //std::cout << "bSph calc"<<std::endl;
-  // normalize the v_normals and make modelview trans of obj = identity matrix
-  CenterNScale(m_modelCenter,1.0/sphRadius);
+  CenterAt0NScale21();
   CreateTriangles();
   Print();
   return true;
 }
 
-void Model::CenterNScale(glm::dvec3 centerAt,double scaleFactor){
+void Model::CenterAt0NScale21(){
+  glm::dvec3 min2Max = m_maxs - m_mins;
+  double maxDistance = glm::length(min2Max);
+  glm::dvec3 centerAt = min2Max * .5;
+  double scaleFactor = 1/maxDistance;
   for( int i = 0; i < faceList->vc; i++ ){
     *faceList->v_normals[i] = glm::normalize(*faceList->v_normals[i]);
     *faceList->vertices[i] = (*faceList->vertices[i] - centerAt) * scaleFactor;
@@ -263,7 +234,7 @@ void Model::CenterNScale(glm::dvec3 centerAt,double scaleFactor){
   std::cout << "model center: " <<  glm::to_string(m_modelCenter)<<std::endl;;
   m_modelCenter = centerAt - centerAt; //move to 0
   std::cout << "model center: " << glm::to_string(m_modelCenter)<<std::endl;
-  m_sphereBV= new Sphere(centerAt,1.0);//create unit sphere BV
+  m_sphereBV= new Sphere(centerAt,.5);//create unit sphere BV
   m_boxBV = new Box(m_mins,m_maxs,m_transform);//create box BV
 }
 
@@ -296,5 +267,6 @@ void Model::CreateTriangles(){
     m_triangles->push_back(triangle);
     //triangle->Print();
   }
+  delete faceList;
 }
 

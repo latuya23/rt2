@@ -2,9 +2,9 @@
 # A simple box viewed from different camera positions
 
 #size 2560 1920
-#size 1280 960
+size 1280 960
 #size 640 480 
-size 320 240
+#size 320 240
 #size 160 120
 #size 80 60
 
@@ -18,7 +18,7 @@ camera 0 0 16 0 0 0 0 1 0 60
 #camera -4 0 1 0 0 1 0 0 1 45
 #camera -4 -4 4 1 0 0 0 1 0 30
 
-maxdepth 2
+maxdepth 1
 
 maxverts 8
 
@@ -31,7 +31,8 @@ vertex +8 -8 +8
 vertex +8 +8 +8
 vertex -8 +8 +8
 
-point -1.5 2 -3 1 1 1
+#point -1.5 2 -3 1 1 1
+arealight -1.5 2 -3 1 1 1 1 36
 
 ambient .1 .1 .1 
 diffuse .5 0 .5
@@ -72,11 +73,14 @@ specular .7 .9 .5
 #tri 4 6 7
 shininess 70
 
-sphere -2 -5 -4 1
-reflection 1.0 1.0 1.0
-translate 0 -5 -4
-rotatey 35
-scale 3 3 3
+#sphere -2 -5 -4 1
+#reflection 1.0 1.0 1.0
+ambient .135 .2225 .1575
+diffuse .54 .89 .63
+specular 0.316228 0.316228 0.316228
+translate 4 -7.5 -3
+rotatey 15
+scale 10 10 10
+#model /dragon/dragon_vrip_res2.ply ccw
 model dragon.ply ccw
-
 

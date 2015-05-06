@@ -8,6 +8,8 @@ RayTracer::RayTracer(int maxD){
 	SetDepth(maxD);
 	avoidShadows = false;
 	avoidAllLightButKaKe = false;
+	avoidRefractions = false;
+	avoidReflections = false;
 }
 
 RayTracer::~RayTracer() {
@@ -21,6 +23,20 @@ void RayTracer::SetDebugNoShadows(bool noShadows){
   avoidShadows = noShadows;
   if (noShadows){
     std::cout<<"debugging no shadows"<<std::endl;
+  }
+}
+
+void RayTracer::SetDebugNoReflections(bool noRefl){
+  avoidReflections = noRefl;
+  if (noRefl){
+    std::cout<<"debugging no reflections"<<std::endl;
+  }
+}
+
+void RayTracer::SetDebugNoRefractions(bool noRefr){
+  avoidRefractions = noRefr;
+  if (noRefr){
+    std::cout<<"debugging no refractions"<<std::endl;
   }
 }
 
@@ -81,15 +97,13 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
     float invSamples = 1.0/tempRays.size();
     for(std::vector<Ray*>::iterator it=tempRays.begin();
 	it!=tempRays.end(); ++it) {
-      if (avoidShadows){
-	continue;
-      }
       // determine if the light is visible
       foundAny = check4Intersection(*it);
+      if (avoidShadows){
+	foundAny = false;
+      }
       if (!foundAny){
 	shadow=invSamples;
-	//add shadow
-	//foundAny=false;
 	// if we didn't find any
 	//  do shading calculation for this
 	// light source
@@ -124,7 +138,7 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
   
   // Handle refractions
   tempKt = closestBRDF.GetKt();
-  if (tempKt>1.0 && avoidRefractions == false){
+  if (tempKt>0.0 && avoidRefractions == false){
     //std::cout<<tempKt<<std::endl;
     Ray refractRay = CreateRefractRay(r->GetD(),closest.GetNormal(),
 				      closest.GetPosition(),depth);
@@ -153,29 +167,15 @@ Ray RayTracer::CreateReflectRay(glm::dvec3 rDir, glm::dvec3 surfNormal, glm::dve
 
 Ray RayTracer::CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal,
 				glm::dvec3 startP, int depth){
-  double n1Overn2 = 0.0;
+  double n1Overn2 = 1.0;
+  
   if (depth % 2 == 1){
-    n1Overn2 = .7519;
-    //n1Overn2 = 1.33;
+    n1Overn2 =1.33;
     surfNormal = -surfNormal; 
   }
   else{
-    // n1Overn2 = .7519;
-    n1Overn2 = 1.33;
-    //surfNormal = -surfNormal; 
-  }
-  //double cosI = glm::dot(surfNormal,rDir) * -1.0;
-  //double sinT2 = n1Overn2*n1Overn2*(1.0-cosI*cosI);
-  //if (sinT2>= 1.0)
-  //  {
-  //    Ray refRay(glm::dvec3(0,0,0),glm::dvec3(0,0,0),glm::dvec3(0,0,0));
-  //    return refRay;
-  //  }
-  //glm::dvec3 tempDir, tempN, trDir;
-  //tempDir = rDir * n1Overn2;
-  //tempN = surfNormal * (n1Overn2+sqrt(1.0-sinT2));
-  //trDir = tempDir - tempN;
-  //trDir = glm::normalize(trDir);
+    n1Overn2 = .7518797;
+    }
   glm::dvec3 refDir = glm::normalize(glm::refract(rDir,surfNormal,n1Overn2));
   Ray refRay(startP,refDir,startP);
   return refRay;

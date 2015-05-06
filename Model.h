@@ -38,13 +38,12 @@ class Model :public Primitive{
   virtual bool Intersects(Ray* ray, Intersection* i);
   virtual void Print();
  private:
-  void calcBSphere(glm::dvec3 *center, double *radius, FaceList *fl);
   bool IntersectsPBV(Ray* ray);
   bool IntersectsPTriangles(Ray* ray);
   bool IntersectsTriangles(Ray* ray, Intersection* i);
   void CreateTriangles();
   bool IsCloser(Intersection t1, Intersection t2);
-  void CenterNScale(glm::dvec3 center, double scale);
+  void CenterAt0NScale21();
 };
 
 #endif /*_MODEL_H_*/

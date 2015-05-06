@@ -47,7 +47,7 @@ void Parser::initialparse(std::ifstream &inputfile, int& sizex, int& sizey) {
     getline (inputfile, line);
     if (inputfile.eof()) {std::cout << "Nothing in file \n"<<std::endl; exit(1);};
     if (line[0] == '#') {
-      std::cout << "Comment # is: " << commentNumber << std::endl;
+      //std::cout << "Comment # is: " << commentNumber << std::endl;
       commentNumber++;
       continue;
     } //comment lines
@@ -94,8 +94,8 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       break;
     }
     if (line[0]=='#') {
-      std::cout << "Comment # is: " << commentNumber << std::endl;
-      std::cout << "Comment: " << line << std::endl;
+      //std::cout << "Comment # is: " << commentNumber << std::endl;
+      //std::cout << "Comment: " << line << std::endl;
       commentNumber++;
       continue; //comment lines
     }
@@ -551,7 +551,6 @@ void Parser::parsefile(std::ifstream &inputfile, Camera *cam,  RayTracer *tracer
       // changes the Kt in the tempBRDF used to set primitives' material
       tempBRDF.SetKt(refraction);
     }
-    
     
     /*****************************************************/
     else {

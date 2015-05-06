@@ -29,8 +29,16 @@ FaceList::FaceList(int vertexCount, int faceCount){
 }
 
 FaceList::~FaceList(){
+  for (int i=0; i <vc;i++){
+    delete vertices[i];
+    delete v_normals[i];
+  }
   delete[] vertices;
   delete[] v_normals;
+  for(int i = 0; i<fc; i++){
+    delete faces[i];
+    delete f_normals[i];
+  }
   delete[] faces;
   delete[] f_normals;
 }

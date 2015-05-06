@@ -20,6 +20,8 @@ const char* fileName = "currTest";
 std::string fileNameNew = "currTest1";
 bool avoidShadows = false;
 bool avoidAllLightButKaKe = false;
+bool noReflections = false;
+bool noRefractions = false;
 
 int main(int argc, char* argv[]) {
   if (argc == 1){
@@ -28,7 +30,7 @@ int main(int argc, char* argv[]) {
   else if (argc >= 3){ 
     int opt;
     int result = -1;
-    while ((opt = getopt(argc,argv,"def:")) != -1)
+    while ((opt = getopt(argc,argv,"bcdef:")) != -1)
       switch(opt) {
        case 'f':
 	 std::cout <<"reading " << fileName <<std::endl;
@@ -44,8 +46,16 @@ int main(int argc, char* argv[]) {
 	 result = rename(fileNameNew.c_str(),fileName);
 	 assert(result ==0);
 	break;
+        case 'b':
+	 std::cout <<"no reflections " <<std::endl;
+	 noReflections = true;
+	 break;
+        case 'c':
+	 std::cout <<"no refractions " <<std::endl;
+	 noRefractions = true;
+	 break;
 	case 'd':
-	 std::cout <<"no shadows " << fileName <<std::endl;
+	 std::cout <<"no shadows " <<std::endl;
 	 avoidShadows = true;
 	 break;
         case 'e':
@@ -54,6 +64,10 @@ int main(int argc, char* argv[]) {
 	 break;
        case '?':
 	 std::cout << "usage is: "<< std::endl;
+	 std::cout << "-b : for no reflections" <<std::endl;
+	 std::cout << "-c : for no refractions" <<std::endl;
+	 std::cout << "-d : for no shadows" <<std::endl;
+	 std::cout << "-e : for no lights" <<std::endl;
 	 std::cout << "-f : for passing filename" <<std::endl;
 	 break;
       default:
@@ -102,8 +116,10 @@ int main(int argc, char* argv[]) {
     myParser.parsefile(inputfile, &myCamera, &myTracer, &maxDepth);
     myTracer.SetDepth(maxDepth);
     std::cout<<"maxDepth: "<<maxDepth<<std::endl;
-    assert(maxDepth>=1 && maxDepth <=4);
+    assert(maxDepth>=1 && maxDepth <=5);
     myTracer.SetDebugNoShadows(avoidShadows);
+    myTracer.SetDebugNoReflections(noReflections);
+    myTracer.SetDebugNoRefractions(noRefractions);
     myTracer.SetDebugNoLightButKaKe(avoidAllLightButKaKe);
     while(mySampler.GetSample(&currSample)){
       currColor.SetColor(0.0,0.0,0.0); // reset currColor to 0 every time
