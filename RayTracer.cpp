@@ -61,9 +61,9 @@ void RayTracer::traceRay(Ray *r, int depth, Color* tColor){
   Color tempKr(0.0,0.0,0.0);
   double tempKt=0.0;
   BRDF closestBRDF;
-  Ray tempRay(glm::dvec3(0,0,0), glm::dvec3(0,0,0), glm::dvec3(0,0,0));
+  Ray tempRay(glm::dvec3(0), glm::dvec3(0), glm::dvec3(0));
   std::vector<Ray*> tempRays;
-  closest = Intersection(glm::dvec3(0,0,0), tempM, 100000.0, glm::dvec3(0,0,0));
+  closest = Intersection(glm::dvec3(0), tempM, 100000.0, glm::dvec3(0));
   bool foundAny = false;
   for (unsigned int i = 0; i < myPrims.size(); i++){
     if (myPrims[i]->Intersects(r,&temp)){
@@ -175,7 +175,7 @@ Ray RayTracer::CreateRefractRay(glm::dvec3 rDir, glm::dvec3 surfNormal,
   }
   else{
     n1Overn2 = .7518797;
-    }
+  }
   glm::dvec3 refDir = glm::normalize(glm::refract(rDir,surfNormal,n1Overn2));
   Ray refRay(startP,refDir,startP);
   return refRay;

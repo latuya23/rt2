@@ -9,15 +9,15 @@
  */
 #include "Box.h"
 
-int Box::next_id=0;
-/*
+int Box::next_b_id=0;
+
 Box::Box(glm::dvec3 minv, glm::dvec3 maxv) {
   m_min = minv;
   m_max = maxv;
   m_transform = glm::dmat4(1.0);
   m_boxId = Box::next_box_id();
   SetVertices();
-  }*/
+  }
 
 Box::Box(glm::dvec3 minv, glm::dvec3 maxv, glm::dmat4 modelM) {
   m_min = minv;
@@ -27,11 +27,44 @@ Box::Box(glm::dvec3 minv, glm::dvec3 maxv, glm::dmat4 modelM) {
   SetVertices();
 }
 
+Box::Box(){
+  m_min = glm::dvec3(99999.0);
+  m_max = glm::dvec3(-999999.0);
+}
 Box::~Box(){
 }
 
 int Box::next_box_id(){
-  return next_id++;
+  return next_b_id++;
+}
+
+glm::dvec3 Box::Center(){
+  return glm::dvec3((m_max - m_min) * .5);
+}
+
+int Box::MaxExtent(){
+  glm::dvec3 diag = m_max - m_min;
+  if (diag.x > diag.y && diag.x > diag.z){
+    return 0;
+  }
+  else if (diag.y > diag.z){
+    return 1;
+  }
+  else{
+    return 2;
+  }
+}
+
+Box* Box::Union(const Box &otherBox){
+  Box* newBox = new Box();
+  newBox->m_min.x = std::min(m_min.x, otherBox.m_min.x);
+  newBox->m_min.y = std::min(m_min.y, otherBox.m_min.y);
+  newBox->m_min.z = std::min(m_min.z, otherBox.m_min.z);
+
+  newBox->m_max.x = std::max(m_max.x, otherBox.m_max.x);
+  newBox->m_max.y = std::max(m_max.y, otherBox.m_max.y);
+  newBox->m_max.z = std::max(m_max.z, otherBox.m_max.z);
+  return newBox;
 }
 
 void Box::Print(){

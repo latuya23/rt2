@@ -20,6 +20,8 @@ Model::Model(const char* fileName, Material m, glm::dmat4 transform, bool ccw){
   m_invTT = glm::inverseTranspose(m_transform);
   m_material = m;
   m_fName = fileName;
+  m_rootKdTree = new KdNode();
+  //std::cout <<"start reading model"<<std::endl;
   if (readModel(ccw)){
     std::cout << "read model successfully"<<std::endl;
   }
@@ -51,20 +53,31 @@ double Model::getBSphereRadius(){
 }
 
 bool Model::Intersects(Ray* ray, Intersection* i){
+  //std::cout << "intersect" << std::endl;
+  //m_rootKdTree->Print();
   if (IntersectsPBV(ray)){
-    return IntersectsTriangles(ray, i);
+    //return IntersectsTriangles(ray, i);
+    //std::cout<<"going here" << std::endl;
+    return m_rootKdTree->IntersectsKDTree(ray,i);
   }
   return false;
 }
 
 bool Model::IntersectsP(Ray* ray){
+  //std::cout << "intersectsP" << std::endl;
   if (IntersectsPBV(ray)){
-    return IntersectsPTriangles(ray);
+    //std::cout<<"going here2" << std::endl;
+    //return IntersectsPTriangles(ray);
+    // m_rootKdTree->Print();
+    Intersection* i = new Intersection(glm::dvec3(0),m_material,
+				       10000.0,glm::dvec3(0));
+    return m_rootKdTree->IntersectsKDTree(ray,i);
   }
   return false;
 }
 
 bool Model::IntersectsPBV(Ray* ray){
+  //m_boxBV->Print();
   return m_boxBV->IntersectsP(ray);
 }
 
@@ -90,6 +103,7 @@ bool Model::IntersectsTriangles(Ray* ray, Intersection* inters){
   *inters = closest;
   return foundAny;
 }
+
 bool Model::IsCloser(Intersection t1, Intersection t2){
   if(t1.GetT() < t2.GetT() && t2.GetT()>.01 && t1.GetT()>.01)
     return true;
@@ -214,7 +228,13 @@ bool Model::readModel (bool ccwVerts){
   modelStream.close();
   CenterAt0NScale21();
   CreateTriangles();
+  std::cout << "start building tree"<<std::endl;
+  m_rootKdTree = m_rootKdTree->buildTree(*m_triangles,0);
+  std::cout << "finish building tree"<<std::endl;
+  m_rootKdTree->Print();
+  //exit(0);
   Print();
+  
   return true;
 }
 

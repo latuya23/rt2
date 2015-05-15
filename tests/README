@@ -1,0 +1,26 @@
+
+
+size 640 480 
+maxdepth 3
+camera 0 0 16 0 0 0 0 1 0 60
+maxverts 8
+vertex -8 -8 -8
+directional 0 5 -5
+point 0 5 -5 1 1 1 
+area 0 5 -5 1 1 1 1 81
+ambient .1 .1 .1 
+diffuse .5 0 .5
+specular 1.0 1.0 1.0
+shininess 20.0
+reflection 1 1 1
+refraction 1.0
+tri 5 1 0
+sphere 6 -6 -4 2
+translate 0 -2 10
+rotate x y z
+rotatex angle
+rotatey angle
+rotatez angle
+scale x y z
+model teapot.ply ccw
+

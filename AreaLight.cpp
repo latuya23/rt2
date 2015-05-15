@@ -49,6 +49,7 @@ glm::dvec3 AreaLight::GetSamplePos(int i, bool jitter/*=true*/){
   assert(i < m_samples);
   double randomx = 0.0;
   double randomz = 0.0;
+  //jitter = false;
   if (jitter){
     randomx += static_cast <double> (rand()) / (static_cast <double> (RAND_MAX/m_delta));
     randomz += static_cast <double> (rand()) / (static_cast <double> (RAND_MAX/m_delta));

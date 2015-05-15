@@ -78,10 +78,14 @@ specular 1.0 1.0 1.0
 #tri 4 5 6 
 #tri 4 6 7 
 
-# Make spheres
-ambient .1 .1 .1
-diffuse 0 0 1
-specular 1.0 1.0 1.0
+#gold
+ambient .24725 .1995 .0745
+diffuse 0.75164 0.60648 0.22648
+specular .628281 .555802 .366065
+shininess 51.2
 #reflection .8 .8 .8
+
+
+# spheres
 sphere 0 -7.5 -6 2.5
 

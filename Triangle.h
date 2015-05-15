@@ -1,6 +1,7 @@
 #ifndef TRIANGLE_H_
 #define TRIANGLE_H_
 #include "Primitive.h"
+#include "Box.h"
 
 class Triangle : public Primitive {
 public:
@@ -16,12 +17,14 @@ public:
 	virtual bool IntersectsP(Ray *r);
 	void printVector(glm::dvec3 v);
 	void setFaceNormal(glm::dvec3 n);
+	Box* m_boxBV;
 private:
 	static int next_tri_id;
 	int m_tri_id;
 	glm::dvec3 vertices[3];
 	glm::dvec3 normals[3];
 	glm::dvec3 face_normal;
+	
 };
 
 #endif /* TRIANGLE_H_ */

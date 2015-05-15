@@ -12,6 +12,7 @@
 #include "Sphere.h"
 #include "Box.h"
 #include "Triangle.h"
+#include "KdNode.h"
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -26,6 +27,7 @@ class Model :public Primitive{
   glm::dvec3 m_mins;
   glm::dvec3 m_maxs;
   std::string m_fName;
+  KdNode* m_rootKdTree;
   Sphere* m_sphereBV;
   Box* m_boxBV;
   Model(const char* fileName, Material m, glm::dmat4 transfrom,bool ccw);
@@ -37,6 +39,7 @@ class Model :public Primitive{
   virtual bool IntersectsP(Ray* ray);
   virtual bool Intersects(Ray* ray, Intersection* i);
   virtual void Print();
+  bool IntersectsKDTree(Ray* ray, Intersection* i);
  private:
   bool IntersectsPBV(Ray* ray);
   bool IntersectsPTriangles(Ray* ray);

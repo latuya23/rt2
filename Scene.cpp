@@ -121,6 +121,7 @@ int main(int argc, char* argv[]) {
     myTracer.SetDebugNoReflections(noReflections);
     myTracer.SetDebugNoRefractions(noRefractions);
     myTracer.SetDebugNoLightButKaKe(avoidAllLightButKaKe);
+    
     while(mySampler.GetSample(&currSample)){
       currColor.SetColor(0.0,0.0,0.0); // reset currColor to 0 every time
       myCamera.GenerateRay(currSample,&currRay);

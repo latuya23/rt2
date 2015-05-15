@@ -1,8 +1,8 @@
 # Test Scene 1 
 # A simple box viewed from different camera positions
 
-size 640 480 
-#size 320 240
+#size 640 480 
+size 320 240
 #size 160 120
 #size 80 60
 
@@ -76,6 +76,6 @@ sphere -2 -3 -5 1
 
 
 translate 0 -3 -5
-#scale 3 3 3
+scale 5 5 5
 model bun.ply ccw
 

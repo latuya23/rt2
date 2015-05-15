@@ -1,0 +1,108 @@
+
+#size 1280 960
+#size 640 480
+size 320 240
+#size 160 120
+#size 80 60
+
+camera 278.0 273.0 800.0 0 0 0 0 1 0 60
+
+#light
+point 343.0 548.8 -227.0 1 1 1 
+#point 343.0 548.8 -332.0
+#point 213.0 548.8 -332.0
+#point 213.0 548.8 -227.0
+#point -5 0 -15 0 1 0
+
+maxdepth 1
+maxverts 32
+
+#floor
+#white
+vertex 552.8 0.0 0.0 
+vertex 0.0 0.0 0.0
+vertex 0.0 0.0 -559.2
+vertex 549.6 0.0 -559.2
+#holes
+vertex 130.0 0.0 -65.0
+vertex 82.0 0.0 -225.0
+vertex 240.0 0.0 -272.0
+vertex 290.0 0.0 -114.0
+
+vertex 423.0 0.0 -247.0
+vertex 265.0 0.0 -296.0
+vertex 314.0 0.0 -456.0
+vertex 472.0 0.0 -406.0
+
+#ceiling
+#white
+vertex 556.0 548.8 0.0   
+vertex 556.0 548.8 -559.2
+vertex 0.0 548.8 -559.2
+vertex 0.0 548.8   0.0
+
+#hole
+vertex 343.0 548.8 -227.0
+vertex 343.0 548.8 -332.0
+vertex 213.0 548.8 -332.0
+vertex 213.0 548.8 -227.0
+
+#back wall
+#white
+vertex 549.6   0.0 -559.2 
+vertex  0.0   0.0 -559.2
+vertex  0.0 548.8 -559.2
+vertex 556.0 548.8 -559.2
+
+#right wall
+#green
+vertex 0.0   0.0 -559.2   
+vertex 0.0   0.0   0.0
+vertex 0.0 548.8   0.0
+vertex 0.0 548.8 -559.2
+
+#left wall
+#red
+vertex 552.8   0.0   0.0 
+vertex 549.6   0.0 -559.2
+vertex 556.0 548.8 -559.2
+vertex 556.0 548.8   0.0
+
+ambient .9 .9 .9
+diffuse .5 .2 .2
+reflection 0 0 0
+
+#floor
+tri 2 1 0
+tri 0 3 2
+
+ambient .9 .9 .9
+#ceiling 12-15
+tri 14 13 12
+tri 12 15 14
+
+ambient .9 .9 .9
+#back 20-23
+tri 22 21 20
+tri 20 23 22
+
+ambient .9 .1 .1
+#left 24-27
+tri 26 25 24
+tri 24 27 26
+
+ambient .1 .9 .1
+#right 28-31
+tri 30 29 28
+tri 28 31 30
+
+
+
+ambient .3 .3 .3
+diffuse .5 1 .5
+specular 1 1 1
+reflection 1 1 1
+translate 2 -3.2 -18
+rotatez 45
+scale 3 3 3
+#model teapot.ply ccw

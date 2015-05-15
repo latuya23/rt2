@@ -25,5 +25,5 @@ diffuse 1 0 0
 specular 0 0 1
 directional 0 0 -1 .5 .5 .5 
 
-model box.ply cw
+model box.ply ccw
 

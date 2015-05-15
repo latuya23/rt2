@@ -23,20 +23,23 @@ class Box : public Primitive{
   glm::dvec3 m_ltn;
   glm::dvec3 m_rtn;
   glm::dvec3 m_lbn;
-  glm::dvec3 m_rbn;
+  glm::dvec3 m_rbn; 
   int m_boxId;
   void *m_quadricObj;
   Box(glm::dvec3 minv,glm::dvec3 maxv);
   Box(glm::dvec3 minv,glm::dvec3 maxv, glm::dmat4 modelM);
+  Box();
   ~Box();
   virtual bool IntersectsP(Ray* ray);
   virtual bool Intersects(Ray* ray, Intersection* i);
   virtual void Print();
   void TransformBox();
-  
+  int MaxExtent();
+  Box* Union(const Box &otherBox);
+  glm::dvec3 Center();
  private:
   static int next_box_id();
-  static int next_id;
+  static int next_b_id;
   void SetVertices();
 };
 
