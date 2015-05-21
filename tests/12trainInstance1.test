@@ -1,0 +1,104 @@
+# Test Scene 2
+# A simple scene to test ray-surface intersections
+# This defines a simple dice
+# There are no transformations in this scene
+
+# Note that I use ambient to set the color of the various materials.
+# It is unlikely that a ray tracing program will be able to do the same or 
+# indeed to interpret multiple instances of the ambient keyword.  
+# To get the same effect, you can assign manually a color to each group of 
+# primitives.  In any case, getting the geometry right is the point of this 
+# exercise, not the shading.
+
+#size 3840 2160
+size 1920 1080
+#size 960 540
+#size 480 270
+#size 1280 960
+#size 640 480
+#size 320 240
+#size 160 120
+#size 80 60
+# There are 3 camera positions.  Make images for all 3
+
+camera 0 0 19 0 0 0 0 1 0 60
+#camera +2 +2 2 0 0 0 -1 -1 2 60
+#camera -2 -2 -2 0 0 0 -1 -1 2 60
+
+
+# Now specify the geometry.  First the cube, then the spheres
+maxdepth 2
+maxverts 8
+
+vertex -10 -10 -10
+vertex +10 -10 -10 
+vertex +10 +10 -10 
+vertex -10 +10 -10 
+vertex -10 -10 +10
+vertex +10 -10 +10 
+vertex +10 +10 +10
+vertex -10 +10 +10
+
+#arealight is defined by a pos a color and a length (it's a square)
+arealight -.5 9 -.5 1 1 1 1 49
+#point -.5 9 -.5 1 1 1 
+
+ambient .3 .3 .3 
+diffuse .5 .5 .5
+specular 0 0 0
+shininess 70.0
+# face -Y
+tri 5 1 0 
+tri 4 5 0 
+ambient .3 .3 .3
+diffuse .5 .5 .5 
+specular 0 0 0
+# face +Y
+tri 6 7 3
+tri 2 6 3
+ambient .1 .1 .1
+diffuse .1 .8 .1
+specular 0 0 0
+# face +X
+tri 6 2 1
+tri 5 6 1
+ambient .1 .1 .1 
+diffuse .8 .1 .1
+specular 0 0 0
+# face -X
+tri 3 7 0 
+tri 7 4 0 
+ambient .3 .3 .3
+diffuse .5 .5 .5
+specular 0 0 0
+# face -Z
+tri 2 3 0 
+tri 1 2 0
+ambient .1 .1 .1
+diffuse .5 .5 1
+specular 1.0 1.0 1.0
+# face +Z
+#tri 4 5 6 
+#tri 4 6 7 
+
+#silver
+ambient 0.19225	0.19225	0.19225	
+diffuse 0.50754	0.50754	0.50754	
+specular 0.508273 0.508273 0.508273
+shininess 51.2
+reflection .8 .8 .8
+sphere -6 -6 -3 4
+
+# Make spheres
+#gold
+ambient .24725 .1995 .0745
+diffuse 0.75164 0.60648 0.22648
+specular .628281 .555802 .366065
+shininess 51.2
+reflection 0 0 0
+translate 9.5 -9.3 .3 .3 0
+#rotatey 45 
+scale 14 14 14
+#model dragon.ply ccw
+model /dragon/dragon_vrip.ply ccw
+

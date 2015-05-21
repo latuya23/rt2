@@ -1,0 +1,99 @@
+# Test Scene 1 
+# A simple box viewed from different camera positions
+
+size 3000 2400 
+#size 1500 1200
+#size 750 600
+#size 375 300
+
+#size 2560 1920
+#size 1280 960
+#size 640 480 
+#size 320 240
+#size 160 120
+#size 80 60
+
+# Now specify the camera.  This is what you should implement.
+# This file has 4 camera positions.  Render your scene for all 4.
+
+camera 0 0 16 0 0 0 0 1 0 60
+#camera -2 -2 2 0 0 0 1 1 2 60
+#camera 0 0 8 0 0 0 0 1 0 30
+#camera 0 -3 3 0 0 0 0 1 0 30
+#camera -4 0 1 0 0 1 0 0 1 45
+#camera -4 -4 4 1 0 0 0 1 0 30
+
+maxdepth 1
+
+maxverts 8
+
+vertex -8 -8 -8
+vertex +8 -8 -8 
+vertex +8 +8 -8 
+vertex -8 +8 -8 
+vertex -8 -8 +8
+vertex +8 -8 +8 
+vertex +8 +8 +8
+vertex -8 +8 +8
+
+#point -1.5 2 -3 1 1 1
+arealight -1.5 2 -3 1 1 1 1 36
+
+ambient .1 .1 .1 
+diffuse .5 0 .5
+specular .5 .5 .5
+shininess 10.0
+# face -Y
+tri 5 1 0 
+tri 4 5 0 
+ambient .1 .1 .1
+diffuse .5 1 .5 
+specular .5 .5 .5
+# face +Y
+tri 6 7 3
+tri 2 6 3
+ambient .1 .1 .1
+diffuse 1 .5 .5
+specular .5 .5 .5
+# face +X
+tri 6 2 1
+tri 5 6 1
+ambient .1 .1 .1 
+diffuse 0 .5 .5
+specular .5 .5 .5
+# face -X
+tri 3 7 0 
+tri 7 4 0 
+ambient .1 .1 .1
+diffuse .5 .5 0
+specular .3 .3 .3
+# face -Z
+tri 2 3 0 
+tri 1 2 0
+ambient .1 .1 .1
+diffuse .2 .3 1
+specular .5 .5 .5
+# face +Z
+#tri 4 5 6 
+#tri 4 6 7
+shininess 70
+
+#sphere -2 -5 -4 1
+#reflection 1.0 1.0 1.0
+#jade
+#ambient .135 .2225 .1575
+#diffuse .54 .89 .63
+#specular 0.316228 0.316228 0.316228
+
+#cyan rubber
+ambient 0.0 0.05 0.05
+diffuse 0.4 0.5 0.5
+specular 0.04 0.7 0.7
+shininess 10
+
+translate 4 -7.5 -3
+rotatey 15
+scale 10 10 10
+#model /bunny.ply ccw
+#model dragon.ply ccw
+model /dragon/dragon_vrip_res2.ply ccw
