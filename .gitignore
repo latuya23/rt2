@@ -8,6 +8,7 @@
 raytracer
 #ignore ppm files
 *.ppm
+!/losslessShowcasePics/hiResSoftShadowReflDragon.ppm
 #ignore jpg files
 *.jpg
 #ignore data folder
